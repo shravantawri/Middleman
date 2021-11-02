@@ -1,7 +1,130 @@
-from application import app
+from application import app, models, db
+from flask import render_template, request, json, Response, jsonify, redirect, flash, url_for
+from application.models import User, Course, Enrollment
+from application.forms import LoginForm, RegistrationForm
+
+
+courseData = [
+    {"courseID": "1111", "title": "PHP 111", "description": "Intro to PHP",
+     "credits": "3", "term": "Fall, Spring"},
+    {"courseID": "2222", "title": "Java 1",
+     "description": "Intro to Java Programming", "credits": "4",
+     "term": "Spring"}, {"courseID": "3333", "title": "Adv PHP 201",
+                         "description": "Advanced PHP Programming",
+                         "credits": "3", "term": "Fall"},
+    {"courseID": "4444", "title": "Angular 1",
+     "description": "Intro to Angular", "credits": "3",
+     "term": "Fall, Spring"}, {"courseID": "5555", "title": "Java 2",
+                               "description": "Advanced Java Programming",
+                               "credits": "4", "term": "Fall"}]
 
 
 @app.route("/")
 @app.route("/index")
+@app.route("/home")
 def index():
-    return "<h1>Hello Earth</h1>"
+    return render_template("index.html", index=True)
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        email = form.email.data
+        password = form.password.data
+
+        user = User.query.filter_by(email=email).first()
+        if user and user.get_password(password):
+            flash(f"{user.first_name}, You are successfully logged in!", "success")
+            return redirect("/index")
+        else:
+            flash("Sorry, Something went wrong", "danger")
+    return render_template("login.html", title="Login", form=form, login=True)
+
+
+@app.route("/courses/")
+@app.route("/courses/<term>")
+def courses(term="Spring 2019"):
+    return render_template("courses.html", courseData=courseData, courses=True,
+                           term=term)
+
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        email = form.email.data
+        password = form.password.data
+        first_name = form.first_name.data
+        last_name = form.last_name.data
+        user = User(
+            first_name=first_name,
+            last_name=last_name,
+            email=email,
+            password=password
+        )
+        user.set_password(password)
+        db.session.add(user)
+        db.session.commit()
+        flash("You are successfully registered!", "success")
+        return redirect(url_for('index'))
+    return render_template("register.html", title="Register", form=form, register=True)
+
+
+@app.route("/enrollment", methods=["GET", "POST"])
+def enrollment():
+    id = request.form.get('courseID')
+    title = request.form['title']
+    term = request.form.get('term')
+    return render_template("enrollment.html", enrollment=True,
+                           data={"id": id, "title": title, "term": term})
+
+
+@app.route("/api/")
+@app.route("/api/<idx>")
+def api(idx=None):
+    if (idx == None):
+        jdata = courseData
+    else:
+        jdata = courseData[int(idx)]
+
+    return Response(json.dumps(jdata), mimetype="application/json")
+
+
+@app.route("/user")
+def add_user():
+    first_name = request.args.get('first_name')
+    last_name = request.args.get('last_name')
+    email = request.args.get('email')
+    password = request.args.get('password')
+    try:
+        user = User(
+            first_name=first_name,
+            last_name=last_name,
+            email=email,
+            password=password
+        )
+        db.session.add(user)
+        db.session.commit()
+        return "User added. user id={}".format(user.id)
+    except Exception as e:
+        return(str(e))
+
+
+@app.route("/getall")
+def get_all():
+    try:
+        users = User.query.all()
+        # return jsonify([e.serialize() for e in users])
+        return render_template('user.html', users=users)
+    except Exception as e:
+        return(str(e))
+
+
+@app.route("/get/<id_>")
+def get_by_id(id_):
+    try:
+        user = User.query.filter_by(id=id_).first()
+        return jsonify(user.serialize())
+    except Exception as e:
+        return(str(e))
