@@ -3,6 +3,8 @@ from flask import render_template, request, json, Response, jsonify, redirect, f
 from application.models import User, RawItem, Enrollment
 from application.forms import LoginForm, RegistrationForm
 
+import os
+
 
 @app.route("/")
 @app.route("/index")
@@ -143,3 +145,27 @@ def get_by_id(id_):
         return jsonify(user.serialize())
     except Exception as e:
         return(str(e))
+
+
+@app.route("/qr_code/<sku_id>", methods=['GET'])
+def get_qr_code(sku_id):
+    # Import QRCode from pyqrcode
+    import pyqrcode
+    import png
+    from pyqrcode import QRCode
+
+    # Generate QR code
+    url = pyqrcode.create(sku_id)
+
+    # Create and save the svg file naming "myqr.svg"
+    # url.svg("myqr.svg", scale=8)
+
+    # Create and save the png file naming "myqr.png"
+    url.png(os.path.join(
+        app.config['QR_CODE_FOLDER'], sku_id + '.png'), scale=6)
+    # buffer = io.BytesIO()
+    # url.png(buffer)
+
+    # print(list(buffer.getvalue()))
+
+    return redirect(url_for('static', filename='images/'+sku_id + '.png'), code=301)
