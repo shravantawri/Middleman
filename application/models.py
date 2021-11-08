@@ -37,20 +37,21 @@ class User(db.Model):
         return check_password_hash(self.password, password)
 
 
-class Course(db.Model):
-    __tablename__ = 'courses'
-
+class RawItem(db.Model):
+    __tablename__ = 'raw_items'
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String)
-    description = db.Column(db.String)
-    credits = db.Column(db.Integer)
-    term = db.Column(db.String)
+    sku_id = db.Column(db.Integer, unique=True)
+    category = db.Column(db.String)
+    colour = db.Column(db.String)
+    size = db.Column(db.String)
+    quantity = db.Column(db.Integer)
 
-    def __init__(self, title, description, credits, term):
-        self.title = title
-        self.description = description
-        self.credits = credits
-        self.term = term
+    def __init__(self, sku_id, category, colour, size, quantity):
+        self.sku_id = sku_id
+        self.category = category
+        self.colour = colour
+        self.size = size
+        self.quantity = quantity
 
     def __repr__(self):
         return '<id {}>'.format(self.id)
@@ -58,10 +59,11 @@ class Course(db.Model):
     def serialize(self):
         return {
             'id': self.id,
-            'title': self.title,
-            'description': self.description,
-            'credits': self.credits,
-            'term': self.term
+            'sku_id': self.sku_id,
+            'category': self.category,
+            'colour': self.colour,
+            'size': self.size,
+            'quantity': self.quantity
         }
 
 

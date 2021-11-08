@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1>Raw Items</h1>
+
+<div>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">SKU ID</th>
+                <th scope="col">Category</th>
+                <th scope="col">Colour</th>
+                <th scope="col">Size</th>
+                <th scope="col">Quantity</th>
+                <!-- <th scope="col">QR Code</th> -->
+            </tr>
+        </thead>
+        <tbody>
+
+            {% for data in rawItemData %}
+            <tr>
+                <td scope='row'>{{ data["sku_id"] }}</td>
+                <td>{{ data["category"] }}</td>
+                <td>{{ data["colour"] }}</td>
+                <td>{{ data["size"] }}</td>
+                <td>{{ data["quantity"] }}</td>
+                <td>
+                    <form action="{{url_for('enrollment')}}" method="POST">
+                        <input type="hidden" name="courseID" value="{{data['sku_id']}}">
+                        <input type="hidden" name="title" value="{{data['category']}}">
+                        <input type="hidden" name="term" value="{{data['colour']}}">
+                        <button>Add</button>
+                    </form>
+                </td>
+                <td>
+                    <form action="{{url_for('enrollment')}}" method="POST">
+                        <input type="hidden" name="courseID" value="{{data['sku_id']}}">
+                        <input type="hidden" name="title" value="{{data['category']}}">
+                        <input type="hidden" name="term" value="{{data['colour']}}">
+                        <button>Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}
