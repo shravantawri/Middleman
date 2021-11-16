@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField
 from wtforms.validators import DataRequired, Email, Length, EqualTo, ValidationError
-from application.models import User
+from application.models import User, RawItem
 
 
 class LoginForm(FlaskForm):
@@ -28,3 +28,18 @@ class RegistrationForm(FlaskForm):
         user = User.query.filter_by(email=email.data).first()
         if user:
             raise ValidationError("Email is already in use!")
+
+
+class ItemForm(FlaskForm):
+    sku_id = StringField("SKU Id", validators=[DataRequired()])
+    category = StringField("Category", validators=[DataRequired()])
+    colour = StringField(
+        "colour", validators=[DataRequired()])
+    size = StringField("Size", validators=[DataRequired()])
+    quantity = StringField("Quantity", validators=[DataRequired()])
+    submit = SubmitField("Add")
+
+    def validate_sku_id(self, sku_id):
+        raw_item = RawItem.query.filter_by(sku_id=sku_id.data).first()
+        if raw_item:
+            raise ValidationError("SKU Id is already in use!")

@@ -1,0 +1,53 @@
+
+    {% extends "layout.html" %}
+   
+    {% block content %}
+    
+    <div class="container">
+         <form name="login" action="" method="post" novalidate>
+        <fieldset class="form-group">
+            <legend>{{title}}</legend>     
+            {{ form.hidden_tag() }}       
+                <p> {{ form.sku_id.label }}</br>
+                    {{ form.sku_id }}
+                    {% for error in form.sku_id.errors %}
+                     <span class="error-message">{{ error }}</span>
+                    {% endfor %}
+                </p>
+            
+                <p> {{ form.category.label }}</br>
+                    {{ form.category }}
+                    {% for error in form.category.errors %}
+                     <span class="error-message">{{ error }}</span>
+                    {% endfor %}
+                </p>
+            
+                <p> {{ form.colour.label }}</br>
+                    {{ form.colour }}
+                    {% for error in form.colour.errors %}
+                     <span class="error-message">{{ error }}</span>
+                    {% endfor %}
+                </p>
+            
+                <p> {{ form.size.label }}</br>
+                    {{ form.size }}
+                    {% for error in form.size.errors %}
+                     <span class="error-message">{{ error }}</span>
+                    {% endfor %}
+                </p>
+            
+                <p> {{ form.quantity.label }}</br>
+                    {{ form.quantity }}
+                    {% for error in form.quantity.errors %}
+                     <span class="error-message">{{ error }}</span>
+                    {% endfor %}
+                </p>
+            
+                <p> 
+                    {{ form.submit() }}
+                </p>
+            
+        </fieldset>
+        </form>
+    </div>
+    {% endblock %}

@@ -1,7 +1,7 @@
 from application import app, models, db
 from flask import render_template, request, json, Response, jsonify, redirect, flash, url_for
 from application.models import User, RawItem, Enrollment
-from application.forms import LoginForm, RegistrationForm
+from application.forms import LoginForm, RegistrationForm, ItemForm
 
 import os
 
@@ -34,6 +34,29 @@ def raw_items(term=None):
     raw_item_data = RawItem.query.all()
 
     return render_template("raw_items.html", rawItemData=raw_item_data)
+
+
+@app.route("/items/raw/add", methods=["GET", "POST"])
+def add_raw_items():
+    form = ItemForm()
+    if form.validate_on_submit():
+        sku_id = form.sku_id.data
+        category = form.category.data
+        colour = form.colour.data
+        size = form.size.data
+        quantity = form.quantity.data
+        raw_item = RawItem(
+            sku_id=sku_id,
+            category=category,
+            colour=colour,
+            size=size,
+            quantity=quantity
+        )
+        db.session.add(raw_item)
+        db.session.commit()
+        flash("You have successfully added the Item", "success")
+        return redirect(url_for('raw_items'))
+    return render_template("register_item.html", title="Register Items", form=form, register=True)
 
 
 @app.route("/register", methods=["GET", "POST"])
