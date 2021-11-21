@@ -81,6 +81,38 @@ def register():
     return render_template("register.html", title="Register", form=form, register=True)
 
 
+@app.route("/items/raw/quantity/add", methods=["GET", "POST"])
+def add_item():
+    sku_id = request.form.get('sku_id')
+    quantity = request.form.get('quantity')
+    if sku_id:
+        if RawItem.query.filter_by(sku_id=sku_id).first():
+            item = RawItem.query.filter_by(sku_id=sku_id).first()
+            item.quantity = item.quantity + 1
+            db.session.commit()
+            flash(f"added item for {sku_id}, quantity: {quantity}", "success")
+            return render_template("item_add.html", add_item=True, title="Add Item", item=item)
+        else:
+            flash(f"Oops! No Item present for {sku_id}", "danger")
+            return redirect(url_for("raw_items"))
+    else:
+        flash(f"Please provide skuId", "danger")
+        return redirect(url_for("raw_items"))
+
+
+@app.route("/items/raw/quantity/delete", methods=["POST"])
+def delete_item():
+    sku_id = request.form.get('sku_id')
+    item = RawItem.query.filter_by(sku_id=sku_id).first()
+    if item is None:
+        flash(f"Oops! No Item present for {sku_id}", "danger")
+        return redirect(url_for("raw_items"))
+    db.session.delete(item)
+    db.session.commit()
+    flash(f"Deleted Item for {sku_id}", "success")
+    return redirect(url_for("raw_items"))
+
+
 @app.route("/enrollment", methods=["GET", "POST"])
 def enrollment():
     id = request.form.get('courseID')

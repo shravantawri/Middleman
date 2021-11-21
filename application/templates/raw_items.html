@@ -27,18 +27,17 @@
                 <td>{{ data["quantity"] }}</td>
                 <td><img src="{{ url_for('get_qr_code', sku_id=data['sku_id'])}}"></td>
                 <td>
-                    <form action="{{url_for('enrollment')}}" method="POST">
-                        <input type="hidden" name="courseID" value="{{data['sku_id']}}">
-                        <input type="hidden" name="title" value="{{data['category']}}">
-                        <input type="hidden" name="term" value="{{data['colour']}}">
+                    <form action="{{url_for('add_item')}}" method="POST">
+                        <input type="hidden" name="sku_id" value="{{data['sku_id']}}">
+                        <input type="hidden" name="category" value="{{data['category']}}">
+                        <input type="hidden" name="colour" value="{{data['colour']}}">
+                        <input type="hidden" name="quantity" value="{{data['quantity']}}">
                         <button>Add</button>
                     </form>
                 </td>
                 <td>
-                    <form action="{{url_for('enrollment')}}" method="POST">
-                        <input type="hidden" name="courseID" value="{{data['sku_id']}}">
-                        <input type="hidden" name="title" value="{{data['category']}}">
-                        <input type="hidden" name="term" value="{{data['colour']}}">
+                    <form action="{{url_for('delete_item')}}" method="POST">
+                        <input type="hidden" name="sku_id" value="{{data['sku_id']}}">
                         <button>Delete</button>
                     </form>
                 </td>
