@@ -8,7 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://middleman@localhost/middleman_development"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['QR_CODE_FOLDER'] = '/Users/kritika/my_projects/middleman2/application/static/images'
+app.config['QR_CODE_FOLDER'] = 'application/static/images'
 
 
 db = SQLAlchemy()
