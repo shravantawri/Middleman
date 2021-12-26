@@ -7,6 +7,10 @@
                     class="nav-link {% if raw_items %}active{% endif %}">Raw Items</a></li>
             <li class="nav-item"><a href="{{ url_for('add_raw_items') }}"
                     class="nav-link {% if add_raw_items %}active{% endif %}">Add Raw Items</a></li>
+            <li class="nav-item"><a href="{{ url_for('supplier') }}"
+                    class="nav-link {% if supplier %}active{% endif %}">Suppliers</a></li>
+            <li class="nav-item"><a href="{{ url_for('register_supplier') }}"
+                    class="nav-link {% if register_supplier %}active{% endif %}">Register Supplier</a></li>
             {% if not session['username'] %}
             <li class="nav-item"><a href="{{ url_for('register') }}"
                     class="nav-link {% if register %}active{% endif %}">Register</a></li>

@@ -1,7 +1,7 @@
 from application import app, models, db
 from flask import render_template, request, json, Response, jsonify, redirect, flash, url_for
-from application.models import User, RawItem, Enrollment
-from application.forms import LoginForm, RegistrationForm, ItemForm
+from application.models import User, RawItem, Enrollment, Supplier
+from application.forms import LoginForm, RegistrationForm, ItemForm, SupplierForm
 
 import os
 
@@ -212,3 +212,31 @@ def get_qr_code(sku_id):
     # print(list(buffer.getvalue()))
 
     return redirect(url_for('static', filename='images/'+sku_id + '.png'), code=301)
+
+
+@app.route("/supplier/register", methods=["GET", "POST"])
+def register_supplier():
+    form = SupplierForm()
+    if form.validate_on_submit():
+        id = form.id.data
+        location = form.location.data
+        name = form.name.data
+        lead_time = form.lead_time.data
+        supplier = Supplier(
+            id=id,
+            location=location,
+            name=name,
+            lead_time=lead_time,
+        )
+        db.session.add(supplier)
+        db.session.commit()
+        flash("You have successfully registered the supplier", "success")
+        return redirect(url_for('supplier'))
+    return render_template("register_supplier.html", title="Register Supplier", form=form, register_supplier=True)
+
+
+@app.route("/supplier", methods=["GET"])
+def supplier(term=None):
+    supplier_data = Supplier.query.all()
+
+    return render_template("supplier.html", supplierData=supplier_data, supplier=True)

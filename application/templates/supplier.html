@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1>Suppliers</h1>
+
+<div>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Name</th>
+                <th scope="col">Location</th>
+                <th scope="col">Lead Time</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            {% for data in supplierData %}
+            <tr>
+                <td scope='row'>{{ data["id"] }}</td>
+                <td>{{ data["name"] }}</td>
+                <td>{{ data["location"] }}</td>
+                <td>{{ data["lead_time"] }}</td>
+                <!-- <td>
+                    <form action="{{url_for('delete_item')}}" method="POST">
+                        <input type="hidden" name="sku_id" value="{{data['sku_id']}}">
+                        <button>Delete</button>
+                    </form>
+                </td> -->
+            </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

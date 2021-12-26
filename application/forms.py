@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField
 from wtforms.validators import DataRequired, Email, Length, EqualTo, ValidationError
-from application.models import User, RawItem
+from application.models import User, RawItem, Supplier
 
 
 class LoginForm(FlaskForm):
@@ -43,3 +43,16 @@ class ItemForm(FlaskForm):
         raw_item = RawItem.query.filter_by(sku_id=sku_id.data).first()
         if raw_item:
             raise ValidationError("SKU Id is already in use!")
+
+
+class SupplierForm(FlaskForm):
+    id = StringField("Id", validators=[DataRequired()])
+    location = StringField("Location", validators=[DataRequired()])
+    name = StringField("Name", validators=[DataRequired()])
+    lead_time = StringField("Lead Time", validators=[DataRequired()])
+    submit = SubmitField("Add")
+
+    def validate_id(self, id):
+        supplier = Supplier.query.filter_by(id=id.data).first()
+        if supplier:
+            raise ValidationError("Id is already in use!")

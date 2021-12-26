@@ -87,3 +87,28 @@ class Enrollment(db.Model):
             'user_id': self.user_id,
             'course_id': self.course_id,
         }
+
+
+class Supplier(db.Model):
+    __tablename__ = 'supplier'
+    id = db.Column(db.Integer, primary_key=True)
+    location = db.Column(db.String)
+    name = db.Column(db.String)
+    lead_time = db.Column(db.String)
+
+    def __init__(self, id, location, name, lead_time):
+        self.id = id
+        self.location = location
+        self.name = name
+        self.lead_time = lead_time
+
+    def __repr__(self):
+        return '<id {}>'.format(self.id)
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'location': self.location,
+            'name': self.name,
+            'lead_time': self.lead_time,
+        }
