@@ -7,7 +7,6 @@ import os
 
 
 @app.route("/")
-@app.route("/index")
 @app.route("/home")
 def index():
     return render_template("index.html", index=True)
@@ -33,7 +32,7 @@ def login():
 def raw_items(term=None):
     raw_item_data = RawItem.query.all()
 
-    return render_template("raw_items.html", rawItemData=raw_item_data)
+    return render_template("raw_items.html", rawItemData=raw_item_data, raw_items=True)
 
 
 @app.route("/items/raw/add", methods=["GET", "POST"])
@@ -56,7 +55,7 @@ def add_raw_items():
         db.session.commit()
         flash("You have successfully added the Item", "success")
         return redirect(url_for('raw_items'))
-    return render_template("register_item.html", title="Register Items", form=form, register=True)
+    return render_template("register_item.html", title="Register Items", form=form, add_raw_items=True)
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -128,17 +127,6 @@ def enrollment():
             flash(f"Successfully Enrolled in {title}", "success")
     classes = None
     return render_template("enrollment.html", enrollment=True, title="Enrollment", classes=classes)
-
-
-# @app.route("/api/")
-# @app.route("/api/<idx>")
-# def api(idx=None):
-#     if (idx == None):
-#         jdata = courseData
-#     else:
-#         jdata = courseData[int(idx)]
-
-#     return Response(json.dumps(jdata), mimetype="application/json")
 
 
 @app.route("/user")

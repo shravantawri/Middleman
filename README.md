@@ -35,4 +35,5 @@ python manage.py db upgrade
 15. `sudo su - postgres`
 16. `psql`
 17.  SETUP DATABASE
-  
+18. `35.203.12.200:5000`
+
