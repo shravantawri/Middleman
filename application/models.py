@@ -37,36 +37,6 @@ class User(db.Model):
         return check_password_hash(self.password, password)
 
 
-class RawItem(db.Model):
-    __tablename__ = 'raw_items'
-    id = db.Column(db.Integer, primary_key=True)
-    sku_id = db.Column(db.Integer, unique=True)
-    category = db.Column(db.String)
-    colour = db.Column(db.String)
-    size = db.Column(db.String)
-    quantity = db.Column(db.Integer)
-
-    def __init__(self, sku_id, category, colour, size, quantity):
-        self.sku_id = sku_id
-        self.category = category
-        self.colour = colour
-        self.size = size
-        self.quantity = quantity
-
-    def __repr__(self):
-        return '<id {}>'.format(self.id)
-
-    def serialize(self):
-        return {
-            'id': self.id,
-            'sku_id': self.sku_id,
-            'category': self.category,
-            'colour': self.colour,
-            'size': self.size,
-            'quantity': self.quantity
-        }
-
-
 class Enrollment(db.Model):
     __tablename__ = 'enrollment'
 
@@ -111,4 +81,95 @@ class Supplier(db.Model):
             'location': self.location,
             'name': self.name,
             'lead_time': self.lead_time,
+        }
+
+
+class IncomingProduct(db.Model):
+    __tablename__ = 'incoming_products'
+    id = db.Column(db.Integer, primary_key=True)
+    sku_id = db.Column(db.Integer, unique=True)
+    location = db.Column(db.String)
+    reorder_point = db.Column(db.Integer)
+    demand = db.Column(db.Integer)
+    quantity = db.Column(db.Integer)
+
+    def __init__(self, sku_id, location, reorder_point, demand, quantity):
+        self.sku_id = sku_id
+        self.location = location
+        self.reorder_point = reorder_point
+        self.demand = demand
+        self.quantity = quantity
+
+    def __repr__(self):
+        return '<id {}>'.format(self.id)
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'sku_id': self.sku_id,
+            'location': self.location,
+            'reorder_point': self.reorder_point,
+            'demand': self.demand,
+            'quantity': self.quantity
+        }
+
+
+class PlainClothing(db.Model):
+    __tablename__ = 'plain_clothing'
+    id = db.Column(db.Integer, primary_key=True)
+    incoming_product_id = db.Column(
+        db.Integer, db.ForeignKey('incoming_products.id'), unique=True)
+    incoming_product_sku_id = db.Column(
+        db.Integer, db.ForeignKey('incoming_products.sku_id'), unique=True)
+    color = db.Column(db.String)
+    material = db.Column(db.String)
+    sleeve_type = db.Column(db.String)
+    size = db.Column(db.String)
+
+    def __init__(self, incoming_product_id, incoming_product_sku_id, color, material, sleeve_type, size):
+        self.incoming_product_id = incoming_product_id
+        self.incoming_product_sku_id = incoming_product_sku_id
+        self.color = color
+        self.material = material
+        self.sleeve_type = sleeve_type
+        self.size = size
+
+    def __repr__(self):
+        return '<id {}>'.format(self.id)
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'incoming_product_id': self.incoming_product_id,
+            'incoming_product_sku_id': self.incoming_product_sku_id,
+            'color': self.color,
+            'material': self.material,
+            'sleeve_type': self.sleeve_type,
+            'size': self.size
+        }
+
+
+class ProductSupplier(db.Model):
+    __tablename__ = 'product_supplier'
+
+    id = db.Column(db.Integer, primary_key=True)
+    product_id = db.Column(db.Integer, db.ForeignKey('incoming_products.id'))
+    product_sku_id = db.Column(
+        db.Integer, db.ForeignKey('incoming_products.sku_id'))
+    supplier_id = db.Column(db.Integer, db.ForeignKey('supplier.id'))
+
+    def __init__(self, product_id, product_sku_id, supplier_id):
+        self.product_id = product_id
+        self.product_sku_id = product_sku_id
+        self.supplier_id = supplier_id
+
+    def __repr__(self):
+        return '<id {}>'.format(self.id)
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'product_id': self.product_id,
+            'product_sku_id': self.product_sku_id,
+            'supplier_id': self.supplier_id
         }

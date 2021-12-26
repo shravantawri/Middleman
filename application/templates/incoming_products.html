@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1>Incoming Products</h1>
+
+<div>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">SKU ID</th>
+                <th scope="col">Location</th>
+                <th scope="col">Reorder Point</th>
+                <th scope="col">Demand</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">QR Code</th>
+                <!-- <th scope="col">QR Code</th> -->
+            </tr>
+        </thead>
+        <tbody>
+
+            {% for data in incomingProductsData %}
+            <tr>
+                <td scope='row'>{{ data["sku_id"] }}</td>
+                <td>{{ data["location"] }}</td>
+                <td>{{ data["reorder_point"] }}</td>
+                <td>{{ data["demand"] }}</td>
+                <td>{{ data["quantity"] }}</td>
+                <td><img src="{{ url_for('get_qr_code', sku_id=data['sku_id'])}}"></td>
+                <td>
+                    <form action="{{url_for('update_incoming_product')}}" method="POST">
+                        <input type="hidden" name="sku_id" value="{{data['sku_id']}}">
+                        <input type="hidden" name="location" value="{{data['location']}}">
+                        <input type="hidden" name="reorder_point" value="{{data['reorder_point']}}">
+                        <input type="hidden" name="demand" value="{{data['demand']}}">
+                        <input name="quantity", type="number", placeholder=0>
+                        <button>Add Quantity</button>
+                    </form>
+                </td>
+                <td>
+                    <form action="{{url_for('delete_incoming_product')}}" method="POST">
+                        <input type="hidden" name="sku_id" value="{{data['sku_id']}}">
+                        <button>Delete Product</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

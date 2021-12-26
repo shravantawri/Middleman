@@ -1,7 +1,7 @@
 from application import app, models, db
 from flask import render_template, request, json, Response, jsonify, redirect, flash, url_for
-from application.models import User, RawItem, Enrollment, Supplier
-from application.forms import LoginForm, RegistrationForm, ItemForm, SupplierForm
+from application.models import User, Enrollment, Supplier, IncomingProduct, ProductSupplier
+from application.forms import RegistrationForm, SupplierForm, IncomingProductForm
 
 import os
 
@@ -10,52 +10,6 @@ import os
 @app.route("/home")
 def index():
     return render_template("index.html", index=True)
-
-
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        email = form.email.data
-        password = form.password.data
-
-        user = User.query.filter_by(email=email).first()
-        if user and user.get_password(password):
-            flash(f"{user.first_name}, You are successfully logged in!", "success")
-            return redirect("/index")
-        else:
-            flash("Sorry, Something went wrong", "danger")
-    return render_template("login.html", title="Login", form=form, login=True)
-
-
-@app.route("/items/raw")
-def raw_items(term=None):
-    raw_item_data = RawItem.query.all()
-
-    return render_template("raw_items.html", rawItemData=raw_item_data, raw_items=True)
-
-
-@app.route("/items/raw/add", methods=["GET", "POST"])
-def add_raw_items():
-    form = ItemForm()
-    if form.validate_on_submit():
-        sku_id = form.sku_id.data
-        category = form.category.data
-        colour = form.colour.data
-        size = form.size.data
-        quantity = form.quantity.data
-        raw_item = RawItem(
-            sku_id=sku_id,
-            category=category,
-            colour=colour,
-            size=size,
-            quantity=quantity
-        )
-        db.session.add(raw_item)
-        db.session.commit()
-        flash("You have successfully added the Item", "success")
-        return redirect(url_for('raw_items'))
-    return render_template("register_item.html", title="Register Items", form=form, add_raw_items=True)
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -80,38 +34,6 @@ def register():
     return render_template("register.html", title="Register", form=form, register=True)
 
 
-@app.route("/items/raw/quantity/add", methods=["GET", "POST"])
-def add_item():
-    sku_id = request.form.get('sku_id')
-    quantity = request.form.get('quantity')
-    if sku_id:
-        if RawItem.query.filter_by(sku_id=sku_id).first():
-            item = RawItem.query.filter_by(sku_id=sku_id).first()
-            item.quantity = item.quantity + 1
-            db.session.commit()
-            flash(f"added item for {sku_id}, quantity: {quantity}", "success")
-            return render_template("item_add.html", add_item=True, title="Add Item", item=item)
-        else:
-            flash(f"Oops! No Item present for {sku_id}", "danger")
-            return redirect(url_for("raw_items"))
-    else:
-        flash(f"Please provide skuId", "danger")
-        return redirect(url_for("raw_items"))
-
-
-@app.route("/items/raw/quantity/delete", methods=["POST"])
-def delete_item():
-    sku_id = request.form.get('sku_id')
-    item = RawItem.query.filter_by(sku_id=sku_id).first()
-    if item is None:
-        flash(f"Oops! No Item present for {sku_id}", "danger")
-        return redirect(url_for("raw_items"))
-    db.session.delete(item)
-    db.session.commit()
-    flash(f"Deleted Item for {sku_id}", "success")
-    return redirect(url_for("raw_items"))
-
-
 @app.route("/enrollment", methods=["GET", "POST"])
 def enrollment():
     id = request.form.get('courseID')
@@ -127,48 +49,6 @@ def enrollment():
             flash(f"Successfully Enrolled in {title}", "success")
     classes = None
     return render_template("enrollment.html", enrollment=True, title="Enrollment", classes=classes)
-
-
-@app.route("/user")
-def add_user():
-    first_name = request.args.get('first_name')
-    last_name = request.args.get('last_name')
-    email = request.args.get('email')
-    password = request.args.get('password')
-    try:
-        user = User(
-            first_name=first_name,
-            last_name=last_name,
-            email=email,
-            password=password
-        )
-        db.session.add(user)
-        db.session.commit()
-        return "User added. user id={}".format(user.id)
-    except Exception as e:
-        return(str(e))
-
-
-@app.route("/add_raw_item")
-def add_course():
-    sku_id = request.args.get('sku_id')
-    category = request.args.get('category')
-    colour = request.args.get('colour')
-    size = request.args.get('size')
-    quantity = request.args.get('quantity')
-    try:
-        raw_item = RawItem(
-            sku_id=sku_id,
-            category=category,
-            colour=colour,
-            size=size,
-            quantity=quantity
-        )
-        db.session.add(raw_item)
-        db.session.commit()
-        return "Raw Item added. raw item id={}".format(raw_item.id)
-    except Exception as e:
-        return(str(e))
 
 
 @app.route("/getall")
@@ -212,6 +92,83 @@ def get_qr_code(sku_id):
     # print(list(buffer.getvalue()))
 
     return redirect(url_for('static', filename='images/'+sku_id + '.png'), code=301)
+
+
+@app.route("/products/incoming")
+def incoming_products(term=None):
+    incoming_products_data = IncomingProduct.query.all()
+
+    return render_template("incoming_products.html", incomingProductsData=incoming_products_data, incoming_product=True)
+
+
+@app.route("/products/incoming/add", methods=["GET", "POST"])
+def add_incoming_products():
+    form = IncomingProductForm()
+    if form.validate_on_submit():
+        sku_id = form.sku_id.data
+        location = form.location.data
+        reorder_point = form.reorder_point.data
+        demand = form.demand.data
+        quantity = form.quantity.data
+        supplier_id = form.supplier_id.data
+        incoming_product = IncomingProduct(
+            sku_id=sku_id,
+            location=location,
+            reorder_point=reorder_point,
+            demand=demand,
+            quantity=quantity
+        )
+        db.session.add(incoming_product)
+        db.session.commit()
+        product_supplier = ProductSupplier(
+            product_id=incoming_product.id,
+            product_sku_id=incoming_product.sku_id,
+            supplier_id=supplier_id,
+        )
+        db.session.add(product_supplier)
+        db.session.commit()
+        flash("You have successfully added the Product", "success")
+        return redirect(url_for('incoming_products'))
+    return render_template("add_incoming_product.html", title="Add Incoming Product", form=form, add_incoming_product=True)
+
+
+@app.route("/products/incoming/update", methods=["GET", "POST"])
+def update_incoming_product():
+    sku_id = request.form.get('sku_id')
+    str_quantity = request.form.get('quantity')
+    if not str_quantity:
+        quantity = 0
+    else:
+        quantity = int(request.form.get('quantity'))
+    if sku_id:
+        if IncomingProduct.query.filter_by(sku_id=sku_id).first():
+            incoming_product = IncomingProduct.query.filter_by(
+                sku_id=sku_id).first()
+            old_quantity = incoming_product.quantity
+            new_quantity = old_quantity + quantity
+            incoming_product.quantity = new_quantity
+            db.session.commit()
+            flash(f"Updated quantity of product: {sku_id} from: {old_quantity} to: {new_quantity}", "success")
+            return render_template("incoming_product_update.html", incoming_product_update=True, title="Update Incoming Product", incoming_product=incoming_product)
+        else:
+            flash(f"Oops! No Item present for {sku_id}", "danger")
+            return redirect(url_for("incoming_products"))
+    else:
+        flash(f"Please provide skuId", "danger")
+        return redirect(url_for("incoming_products"))
+
+
+@app.route("/products/incoming/delete", methods=["POST"])
+def delete_incoming_product():
+    sku_id = request.form.get('sku_id')
+    incoming_product = IncomingProduct.query.filter_by(sku_id=sku_id).first()
+    if incoming_product is None:
+        flash(f"Oops! No Product present for {sku_id}", "danger")
+        return redirect(url_for("incoming_products"))
+    db.session.delete(incoming_product)
+    db.session.commit()
+    flash(f"Deleted Product for {sku_id}", "success")
+    return redirect(url_for("incoming_products"))
 
 
 @app.route("/supplier/register", methods=["GET", "POST"])

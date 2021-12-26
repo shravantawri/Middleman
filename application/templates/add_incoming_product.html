@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="container">
+    <form name="incoming_product" action="" method="post" novalidate>
+        <fieldset class="form-group">
+            <legend>{{title}}</legend>
+            {{ form.hidden_tag() }}
+            <p> {{ form.sku_id.label }}</br>
+                {{ form.sku_id }}
+                {% for error in form.sku_id.errors %}
+                <span class="error-message">{{ error }}</span>
+                {% endfor %}
+            </p>
+
+            <p> {{ form.location.label }}</br>
+                {{ form.location }}
+                {% for error in form.location.errors %}
+                <span class="error-message">{{ error }}</span>
+                {% endfor %}
+            </p>
+
+            <p> {{ form.reorder_point.label }}</br>
+                {{ form.reorder_point }}
+                {% for error in form.reorder_point.errors %}
+                <span class="error-message">{{ error }}</span>
+                {% endfor %}
+            </p>
+
+            <p> {{ form.demand.label }}</br>
+                {{ form.demand }}
+                {% for error in form.demand.errors %}
+                <span class="error-message">{{ error }}</span>
+                {% endfor %}
+            </p>
+
+            <p> {{ form.quantity.label }}</br>
+                {{ form.quantity }}
+                {% for error in form.quantity.errors %}
+                <span class="error-message">{{ error }}</span>
+                {% endfor %}
+            </p>
+
+            <p> {{ form.supplier_id.label }}</br>
+                {{ form.supplier_id }}
+                {% for error in form.supplier_id.errors %}
+                <span class="error-message">{{ error }}</span>
+                {% endfor %}
+            </p>
+
+            <p>
+                {{ form.submit() }}
+            </p>
+
+        </fieldset>
+    </form>
+</div>
+{% endblock %}
