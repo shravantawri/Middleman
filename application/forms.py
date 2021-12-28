@@ -35,12 +35,12 @@ class SupplierForm(FlaskForm):
             raise ValidationError("Id is already in use!")
 
 
-class IncomingProductForm(FlaskForm):
+class AddIncomingProductForm(FlaskForm):
     sku_id = StringField("SKU Id", validators=[DataRequired()])
     location = StringField("Location", validators=[DataRequired()])
     reorder_point = StringField("Reorder Point", validators=[DataRequired()])
     demand = StringField("Demand", validators=[DataRequired()])
-    quantity = StringField("Quantity", validators=[DataRequired()])
+    total_quantity = StringField("Total Quantity", validators=[DataRequired()])
     supplier_id = StringField("Supplier Id", validators=[DataRequired()])
     submit = SubmitField("Add")
 
@@ -56,3 +56,15 @@ class IncomingProductForm(FlaskForm):
         if not supplier:
             raise ValidationError(
                 "Supplier not present for this particular ID")
+
+
+class UpdateIncomingProductForm(FlaskForm):
+    sku_id = StringField("SKU Id", validators=[DataRequired()])
+    add_quantity = StringField("Add Quantity", validators=[DataRequired()])
+    submit = SubmitField("Update")
+
+    def validate_sku_id(self, sku_id):
+        incoming_product = IncomingProduct.query.filter_by(
+            sku_id=sku_id.data).first()
+        if not incoming_product:
+            raise ValidationError(f'Product for SKU ID: {sku_id} not present.')

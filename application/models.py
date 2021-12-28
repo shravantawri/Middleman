@@ -2,6 +2,8 @@ from application import app, db
 import flask
 from werkzeug.security import generate_password_hash, check_password_hash
 
+import datetime
+
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -91,14 +93,17 @@ class IncomingProduct(db.Model):
     location = db.Column(db.String)
     reorder_point = db.Column(db.Integer)
     demand = db.Column(db.Integer)
-    quantity = db.Column(db.Integer)
+    total_quantity = db.Column(db.Integer)
+    created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow())
+    updated_at = db.Column(db.DateTime, default=datetime.datetime.utcnow())
 
-    def __init__(self, sku_id, location, reorder_point, demand, quantity):
+    def __init__(self, sku_id, location, reorder_point, demand, total_quantity, updated_at=None):
         self.sku_id = sku_id
         self.location = location
         self.reorder_point = reorder_point
         self.demand = demand
-        self.quantity = quantity
+        self.total_quantity = total_quantity
+        self.updated_at = updated_at or datetime.datetime.utcnow()
 
     def __repr__(self):
         return '<id {}>'.format(self.id)
@@ -110,7 +115,9 @@ class IncomingProduct(db.Model):
             'location': self.location,
             'reorder_point': self.reorder_point,
             'demand': self.demand,
-            'quantity': self.quantity
+            'total_quantity': self.total_quantity,
+            'created_at': self.created_at,
+            'updated_at': self.updated_at
         }
 
 

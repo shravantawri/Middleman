@@ -1,9 +1,10 @@
 from application import app, models, db
 from flask import render_template, request, json, Response, jsonify, redirect, flash, url_for
 from application.models import User, Enrollment, Supplier, IncomingProduct, ProductSupplier
-from application.forms import RegistrationForm, SupplierForm, IncomingProductForm
+from application.forms import RegistrationForm, SupplierForm, AddIncomingProductForm, UpdateIncomingProductForm
 
 import os
+import datetime
 
 
 @app.route("/")
@@ -96,27 +97,28 @@ def get_qr_code(sku_id):
 
 @app.route("/products/incoming")
 def incoming_products(term=None):
-    incoming_products_data = IncomingProduct.query.all()
+    incoming_products_data = IncomingProduct.query.order_by(
+        IncomingProduct.updated_at.desc()).all()
 
     return render_template("incoming_products.html", incomingProductsData=incoming_products_data, incoming_product=True)
 
 
 @app.route("/products/incoming/add", methods=["GET", "POST"])
 def add_incoming_products():
-    form = IncomingProductForm()
+    form = AddIncomingProductForm()
     if form.validate_on_submit():
         sku_id = form.sku_id.data
         location = form.location.data
         reorder_point = form.reorder_point.data
         demand = form.demand.data
-        quantity = form.quantity.data
+        total_quantity = form.total_quantity.data
         supplier_id = form.supplier_id.data
         incoming_product = IncomingProduct(
             sku_id=sku_id,
             location=location,
             reorder_point=reorder_point,
             demand=demand,
-            quantity=quantity
+            total_quantity=total_quantity
         )
         db.session.add(incoming_product)
         db.session.commit()
@@ -134,28 +136,25 @@ def add_incoming_products():
 
 @app.route("/products/incoming/update", methods=["GET", "POST"])
 def update_incoming_product():
-    sku_id = request.form.get('sku_id')
-    str_quantity = request.form.get('quantity')
-    if not str_quantity:
-        quantity = 0
-    else:
-        quantity = int(request.form.get('quantity'))
-    if sku_id:
-        if IncomingProduct.query.filter_by(sku_id=sku_id).first():
-            incoming_product = IncomingProduct.query.filter_by(
-                sku_id=sku_id).first()
-            old_quantity = incoming_product.quantity
-            new_quantity = old_quantity + quantity
-            incoming_product.quantity = new_quantity
+    form = UpdateIncomingProductForm()
+    if form.validate_on_submit():
+        sku_id = form.sku_id.data
+        add_quantity = int(form.add_quantity.data)
+        incoming_product = IncomingProduct.query.filter_by(
+            sku_id=sku_id).first()
+        if incoming_product:
+            old_quantity = incoming_product.total_quantity
+            new_quantity = old_quantity + add_quantity
+            incoming_product.total_quantity = new_quantity
+            incoming_product.updated_at = datetime.datetime.utcnow()
             db.session.commit()
-            flash(f"Updated quantity of product: {sku_id} from: {old_quantity} to: {new_quantity}", "success")
-            return render_template("incoming_product_update.html", incoming_product_update=True, title="Update Incoming Product", incoming_product=incoming_product)
+            flash(
+                f"Updated quantity of product: {sku_id} from: {old_quantity} to: {new_quantity}", "success")
+            return render_template("incoming_product_update_response.html", incoming_product_update=True, title="Updated Raw Product Quantity", incoming_product=incoming_product)
         else:
             flash(f"Oops! No Item present for {sku_id}", "danger")
             return redirect(url_for("incoming_products"))
-    else:
-        flash(f"Please provide skuId", "danger")
-        return redirect(url_for("incoming_products"))
+    return render_template("incoming_product_update_request.html", title="Update Raw Product Quantity", form=form, update_incoming_product=True)
 
 
 @app.route("/products/incoming/delete", methods=["POST"])
@@ -165,6 +164,11 @@ def delete_incoming_product():
     if incoming_product is None:
         flash(f"Oops! No Product present for {sku_id}", "danger")
         return redirect(url_for("incoming_products"))
+    product_supplier = ProductSupplier.query.filter_by(
+        product_sku_id=sku_id).first()
+    if product_supplier:
+        db.session.delete(product_supplier)
+        db.session.commit()
     db.session.delete(incoming_product)
     db.session.commit()
     flash(f"Deleted Product for {sku_id}", "success")
