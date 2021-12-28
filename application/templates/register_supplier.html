@@ -4,41 +4,34 @@
     {% block content %}
     
     <div class="container">
-         <form name="login" action="" method="post" novalidate>
+         <form name="register_supplier" action="" method="post" novalidate>
         <fieldset class="form-group">
             <legend>{{title}}</legend>     
             {{ form.hidden_tag() }}       
-                <p> {{ form.sku_id.label }}</br>
-                    {{ form.sku_id }}
-                    {% for error in form.sku_id.errors %}
+                <p> {{ form.id.label }}</br>
+                    {{ form.id }}
+                    {% for error in form.id.errors %}
                      <span class="error-message">{{ error }}</span>
                     {% endfor %}
                 </p>
             
-                <p> {{ form.category.label }}</br>
-                    {{ form.category }}
-                    {% for error in form.category.errors %}
+                <p> {{ form.location.label }}</br>
+                    {{ form.location }}
+                    {% for error in form.location.errors %}
                      <span class="error-message">{{ error }}</span>
                     {% endfor %}
                 </p>
             
-                <p> {{ form.colour.label }}</br>
-                    {{ form.colour }}
-                    {% for error in form.colour.errors %}
+                <p> {{ form.name.label }}</br>
+                    {{ form.name }}
+                    {% for error in form.name.errors %}
                      <span class="error-message">{{ error }}</span>
                     {% endfor %}
                 </p>
             
-                <p> {{ form.size.label }}</br>
-                    {{ form.size }}
-                    {% for error in form.size.errors %}
-                     <span class="error-message">{{ error }}</span>
-                    {% endfor %}
-                </p>
-            
-                <p> {{ form.quantity.label }}</br>
-                    {{ form.quantity }}
-                    {% for error in form.quantity.errors %}
+                <p> {{ form.lead_time.label }}</br>
+                    {{ form.lead_time }}
+                    {% for error in form.lead_time.errors %}
                      <span class="error-message">{{ error }}</span>
                     {% endfor %}
                 </p>
