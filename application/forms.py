@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField
 from wtforms.validators import DataRequired, Email, Length, EqualTo, ValidationError
-from application.models import User, Supplier, IncomingProduct, ProductSupplier
+from application.models import User, Supplier, IncomingProduct, ProductSupplier, PlainClothing, Htp, Embroidery
 
 
 class RegistrationForm(FlaskForm):
@@ -35,19 +35,23 @@ class SupplierForm(FlaskForm):
             raise ValidationError("Id is already in use!")
 
 
-class AddIncomingProductForm(FlaskForm):
+class AddPlainClothingForm(FlaskForm):
     sku_id = StringField("SKU Id", validators=[DataRequired()])
     location = StringField("Location", validators=[DataRequired()])
     reorder_point = StringField("Reorder Point", validators=[DataRequired()])
     demand = StringField("Demand", validators=[DataRequired()])
     total_quantity = StringField("Total Quantity", validators=[DataRequired()])
+    color = StringField("Colour", validators=[DataRequired()])
+    material = StringField("Material", validators=[DataRequired()])
+    sleeve_type = StringField("Sleeve Type", validators=[DataRequired()])
+    size = StringField("Size", validators=[DataRequired()])
     supplier_id = StringField("Supplier Id", validators=[DataRequired()])
     submit = SubmitField("Add")
 
     def validate_sku_id(self, sku_id):
-        incoming_product = IncomingProduct.query.filter_by(
+        plain_clothing = PlainClothing.query.filter_by(
             sku_id=sku_id.data).first()
-        if incoming_product:
+        if plain_clothing:
             raise ValidationError("SKU Id is already in use!")
 
     def validate_supplier_id(self, supplier_id):
@@ -58,13 +62,87 @@ class AddIncomingProductForm(FlaskForm):
                 "Supplier not present for this particular ID")
 
 
-class UpdateIncomingProductForm(FlaskForm):
+class AddEmbroideryForm(FlaskForm):
+    sku_id = StringField("SKU Id", validators=[DataRequired()])
+    location = StringField("Location", validators=[DataRequired()])
+    reorder_point = StringField("Reorder Point", validators=[DataRequired()])
+    demand = StringField("Demand", validators=[DataRequired()])
+    total_quantity = StringField("Total Quantity", validators=[DataRequired()])
+    color = StringField("Colour", validators=[DataRequired()])
+    supplier_id = StringField("Supplier Id", validators=[DataRequired()])
+    submit = SubmitField("Add")
+
+    def validate_sku_id(self, sku_id):
+        embroidery = Embroidery.query.filter_by(
+            sku_id=sku_id.data).first()
+        if embroidery:
+            raise ValidationError("SKU Id is already in use!")
+
+    def validate_supplier_id(self, supplier_id):
+        supplier = Supplier.query.filter_by(
+            id=supplier_id.data).first()
+        if not supplier:
+            raise ValidationError(
+                "Supplier not present for this particular ID")
+
+
+class AddHtpForm(FlaskForm):
+    sku_id = StringField("SKU Id", validators=[DataRequired()])
+    location = StringField("Location", validators=[DataRequired()])
+    reorder_point = StringField("Reorder Point", validators=[DataRequired()])
+    demand = StringField("Demand", validators=[DataRequired()])
+    total_quantity = StringField("Total Quantity", validators=[DataRequired()])
+    supplier_id = StringField("Supplier Id", validators=[DataRequired()])
+    submit = SubmitField("Add")
+
+    def validate_sku_id(self, sku_id):
+        htp = Htp.query.filter_by(
+            sku_id=sku_id.data).first()
+        if htp:
+            raise ValidationError("SKU Id is already in use!")
+
+    def validate_supplier_id(self, supplier_id):
+        supplier = Supplier.query.filter_by(
+            id=supplier_id.data).first()
+        if not supplier:
+            raise ValidationError(
+                "Supplier not present for this particular ID")
+
+
+class UpdatePlainClothingForm(FlaskForm):
     sku_id = StringField("SKU Id", validators=[DataRequired()])
     add_quantity = StringField("Add Quantity", validators=[DataRequired()])
     submit = SubmitField("Update")
 
     def validate_sku_id(self, sku_id):
-        incoming_product = IncomingProduct.query.filter_by(
+        plain_clothing = PlainClothing.query.filter_by(
             sku_id=sku_id.data).first()
-        if not incoming_product:
-            raise ValidationError(f'Product for SKU ID: {sku_id} not present.')
+        if not plain_clothing:
+            raise ValidationError(
+                f'Product for SKU ID: {sku_id.data} is not present. Please add plain clothing')
+
+
+class UpdateHtpForm(FlaskForm):
+    sku_id = StringField("SKU Id", validators=[DataRequired()])
+    add_quantity = StringField("Add Quantity", validators=[DataRequired()])
+    submit = SubmitField("Update")
+
+    def validate_sku_id(self, sku_id):
+        htp = Htp.query.filter_by(
+            sku_id=sku_id.data).first()
+        if not htp:
+            raise ValidationError(
+                f'Product for SKU ID: {sku_id.data} is not present. Please add HTP')
+
+
+class UpdateEmbroideryForm(FlaskForm):
+    sku_id = StringField("SKU Id", validators=[DataRequired()])
+    add_quantity = StringField("Add Quantity", validators=[DataRequired()])
+    submit = SubmitField("Update")
+
+    def validate_sku_id(self, sku_id):
+        embroidery = Embroidery.query.filter_by(
+            sku_id=sku_id.data).first()
+        if not embroidery:
+            raise ValidationError(
+                f'Product for SKU ID: {sku_id.data} is not present. Please add embroidery')

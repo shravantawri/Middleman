@@ -3,7 +3,7 @@
 {% block content %}
 
 <div class="container">
-    <form name="incoming_product" action="" method="post" novalidate>
+    <form name="plain_clothing" action="" method="post" novalidate>
         <fieldset class="form-group">
             <legend>{{title}}</legend>
             {{ form.hidden_tag() }}
@@ -38,6 +38,34 @@
             <p> {{ form.total_quantity.label }}</br>
                 {{ form.total_quantity }}
                 {% for error in form.total_quantity.errors %}
+                <span class="error-message">{{ error }}</span>
+                {% endfor %}
+            </p>
+
+            <p> {{ form.color.label }}</br>
+                {{ form.color }}
+                {% for error in form.color.errors %}
+                <span class="error-message">{{ error }}</span>
+                {% endfor %}
+            </p>
+
+            <p> {{ form.material.label }}</br>
+                {{ form.material }}
+                {% for error in form.material.errors %}
+                <span class="error-message">{{ error }}</span>
+                {% endfor %}
+            </p>
+
+            <p> {{ form.sleeve_type.label }}</br>
+                {{ form.sleeve_type }}
+                {% for error in form.sleeve_type.errors %}
+                <span class="error-message">{{ error }}</span>
+                {% endfor %}
+            </p>
+            
+            <p> {{ form.size.label }}</br>
+                {{ form.size }}
+                {% for error in form.size.errors %}
                 <span class="error-message">{{ error }}</span>
                 {% endfor %}
             </p>

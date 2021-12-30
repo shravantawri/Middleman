@@ -1,65 +1,15 @@
+import datetime
+import os
 from application import app, models, db
 from flask import render_template, request, json, Response, jsonify, redirect, flash, url_for
-from application.models import User, Enrollment, Supplier, IncomingProduct, ProductSupplier
-from application.forms import RegistrationForm, SupplierForm, AddIncomingProductForm, UpdateIncomingProductForm
-
-import os
-import datetime
+from application.models import User, Enrollment, Supplier, IncomingProduct, ProductSupplier, PlainClothing, Embroidery, Htp
+from application.forms import RegistrationForm, SupplierForm, AddPlainClothingForm, UpdatePlainClothingForm, AddPlainClothingForm, AddEmbroideryForm, AddHtpForm, UpdateEmbroideryForm, UpdateHtpForm
 
 
 @app.route("/")
 @app.route("/home")
 def index():
     return render_template("index.html", index=True)
-
-
-@app.route("/register", methods=["GET", "POST"])
-def register():
-    form = RegistrationForm()
-    if form.validate_on_submit():
-        email = form.email.data
-        password = form.password.data
-        first_name = form.first_name.data
-        last_name = form.last_name.data
-        user = User(
-            first_name=first_name,
-            last_name=last_name,
-            email=email,
-            password=password
-        )
-        user.set_password(password)
-        db.session.add(user)
-        db.session.commit()
-        flash("You are successfully registered!", "success")
-        return redirect(url_for('index'))
-    return render_template("register.html", title="Register", form=form, register=True)
-
-
-@app.route("/enrollment", methods=["GET", "POST"])
-def enrollment():
-    id = request.form.get('courseID')
-    title = request.form.get('title')
-    term = request.form.get('term')
-    user_id = 1
-    if id:
-        if Enrollment.query.filter_by(course_id=id, user_id=user_id).first():
-            flash(f"Oops! Already registered in this course {title}", "danger")
-            return redirect(url_for("courses"))
-        else:
-            Enrollment(user_id=user_id, course_id=id)
-            flash(f"Successfully Enrolled in {title}", "success")
-    classes = None
-    return render_template("enrollment.html", enrollment=True, title="Enrollment", classes=classes)
-
-
-@app.route("/getall")
-def get_all():
-    try:
-        users = User.query.all()
-        # return jsonify([e.serialize() for e in users])
-        return render_template('user.html', users=users)
-    except Exception as e:
-        return(str(e))
 
 
 @app.route("/get/<id_>")
@@ -103,9 +53,114 @@ def incoming_products(term=None):
     return render_template("incoming_products.html", incomingProductsData=incoming_products_data, incoming_product=True)
 
 
-@app.route("/products/incoming/add", methods=["GET", "POST"])
-def add_incoming_products():
-    form = AddIncomingProductForm()
+@app.route("/products/raw")
+def raw_products(term=None):
+    raw_product_data = IncomingProduct.query.order_by(
+        IncomingProduct.updated_at.desc()).all()
+
+    return render_template("raw_products.html", incomingProductsData=raw_product_data, raw_product=True)
+
+
+@app.route("/products/raw/plain_clothing")
+def view_plain_clothing(term=None):
+    plain_clothing_data = PlainClothing.query.order_by(
+        PlainClothing.updated_at.desc()).all()
+
+    return render_template("plain_clothing.html", plainClothingData=plain_clothing_data, plain_clothing=True)
+
+
+@app.route("/products/raw/embroidery")
+def view_embroidery(term=None):
+    embroidery_data = Embroidery.query.order_by(
+        Embroidery.updated_at.desc()).all()
+
+    return render_template("embroidery.html", embroideryData=embroidery_data, embroidery=True)
+
+
+@app.route("/products/raw/htp")
+def view_htp(term=None):
+    htp_data = Htp.query.order_by(
+        Htp.updated_at.desc()).all()
+
+    return render_template("htp.html", htpData=htp_data, htp=True)
+
+
+@app.route("/products/raw/plain_clothing/add", methods=["GET", "POST"])
+def add_plain_clothing():
+    form = AddPlainClothingForm()
+    if form.validate_on_submit():
+        sku_id = form.sku_id.data
+        location = form.location.data
+        reorder_point = form.reorder_point.data
+        demand = form.demand.data
+        total_quantity = form.total_quantity.data
+        color = form.color.data
+        material = form.material.data
+        sleeve_type = form.sleeve_type.data
+        size = form.size.data
+        supplier_id = form.supplier_id.data
+        plain_clothing = PlainClothing(
+            sku_id=sku_id,
+            location=location,
+            reorder_point=reorder_point,
+            demand=demand,
+            total_quantity=total_quantity,
+            color=color,
+            sleeve_type=sleeve_type,
+            material=material,
+            size=size
+
+        )
+        db.session.add(plain_clothing)
+        db.session.commit()
+        product_supplier = ProductSupplier(
+            product_id=plain_clothing.id,
+            product_sku_id=plain_clothing.sku_id,
+            supplier_id=supplier_id,
+        )
+        db.session.add(product_supplier)
+        db.session.commit()
+        flash("You have successfully added the Product", "success")
+        return redirect(url_for('view_plain_clothing'))
+    return render_template("add_plain_clothing.html", title="Add Plain Clothing", form=form, add_plain_clothing=True)
+
+
+@app.route("/products/raw/embroidery/add", methods=["GET", "POST"])
+def add_embroidery():
+    form = AddEmbroideryForm()
+    if form.validate_on_submit():
+        sku_id = form.sku_id.data
+        location = form.location.data
+        reorder_point = form.reorder_point.data
+        demand = form.demand.data
+        total_quantity = form.total_quantity.data
+        color = form.color.data
+        supplier_id = form.supplier_id.data
+        embroidery = Embroidery(
+            sku_id=sku_id,
+            location=location,
+            reorder_point=reorder_point,
+            demand=demand,
+            total_quantity=total_quantity,
+            color=color,
+        )
+        db.session.add(embroidery)
+        db.session.commit()
+        product_supplier = ProductSupplier(
+            product_id=embroidery.id,
+            product_sku_id=embroidery.sku_id,
+            supplier_id=supplier_id,
+        )
+        db.session.add(product_supplier)
+        db.session.commit()
+        flash("You have successfully added the Product", "success")
+        return redirect(url_for('view_embroidery'))
+    return render_template("add_embroidery.html", title="Add Embroidery", form=form, add_embroidery=True)
+
+
+@app.route("/products/raw/htp/add", methods=["GET", "POST"])
+def add_htp():
+    form = AddHtpForm()
     if form.validate_on_submit():
         sku_id = form.sku_id.data
         location = form.location.data
@@ -113,48 +168,94 @@ def add_incoming_products():
         demand = form.demand.data
         total_quantity = form.total_quantity.data
         supplier_id = form.supplier_id.data
-        incoming_product = IncomingProduct(
+        htp = Htp(
             sku_id=sku_id,
             location=location,
             reorder_point=reorder_point,
             demand=demand,
-            total_quantity=total_quantity
+            total_quantity=total_quantity,
         )
-        db.session.add(incoming_product)
+        db.session.add(htp)
         db.session.commit()
         product_supplier = ProductSupplier(
-            product_id=incoming_product.id,
-            product_sku_id=incoming_product.sku_id,
+            product_id=htp.id,
+            product_sku_id=htp.sku_id,
             supplier_id=supplier_id,
         )
         db.session.add(product_supplier)
         db.session.commit()
         flash("You have successfully added the Product", "success")
-        return redirect(url_for('incoming_products'))
-    return render_template("add_incoming_product.html", title="Add Incoming Product", form=form, add_incoming_product=True)
+        return redirect(url_for('view_htp'))
+    return render_template("add_htp.html", title="Add HTP", form=form, add_htp=True)
 
 
-@app.route("/products/incoming/update", methods=["GET", "POST"])
-def update_incoming_product():
-    form = UpdateIncomingProductForm()
+@app.route("/products/raw/plain_clothing/increase", methods=["GET", "POST"])
+def increase_plain_clothing():
+    form = UpdatePlainClothingForm()
     if form.validate_on_submit():
         sku_id = form.sku_id.data
         add_quantity = int(form.add_quantity.data)
-        incoming_product = IncomingProduct.query.filter_by(
+        plain_clothing = PlainClothing.query.filter_by(
             sku_id=sku_id).first()
-        if incoming_product:
-            old_quantity = incoming_product.total_quantity
+        if plain_clothing:
+            old_quantity = plain_clothing.total_quantity
             new_quantity = old_quantity + add_quantity
-            incoming_product.total_quantity = new_quantity
-            incoming_product.updated_at = datetime.datetime.utcnow()
+            plain_clothing.total_quantity = new_quantity
+            plain_clothing.updated_at = datetime.datetime.utcnow()
             db.session.commit()
             flash(
                 f"Updated quantity of product: {sku_id} from: {old_quantity} to: {new_quantity}", "success")
-            return render_template("incoming_product_update_response.html", incoming_product_update=True, title="Updated Raw Product Quantity", incoming_product=incoming_product)
+            return render_template("update_plain_clothing_response.html", title="Updated Plain Clothing Quantity", data=plain_clothing)
         else:
             flash(f"Oops! No Item present for {sku_id}", "danger")
-            return redirect(url_for("incoming_products"))
-    return render_template("incoming_product_update_request.html", title="Update Raw Product Quantity", form=form, update_incoming_product=True)
+            return redirect(url_for("plain_clothing"))
+    return render_template("increase_raw_product_request.html", title="Update Plain Clothing Quantity", form=form)
+
+
+@app.route("/products/raw/htp/increase", methods=["GET", "POST"])
+def increase_htp():
+    form = UpdateHtpForm()
+    if form.validate_on_submit():
+        sku_id = form.sku_id.data
+        add_quantity = int(form.add_quantity.data)
+        htp = Htp.query.filter_by(
+            sku_id=sku_id).first()
+        if htp:
+            old_quantity = htp.total_quantity
+            new_quantity = old_quantity + add_quantity
+            htp.total_quantity = new_quantity
+            htp.updated_at = datetime.datetime.utcnow()
+            db.session.commit()
+            flash(
+                f"Updated quantity of product: {sku_id} from: {old_quantity} to: {new_quantity}", "success")
+            return render_template("update_htp_response.html",  title="Updated HTP Quantity", data=htp)
+        else:
+            flash(f"Oops! No Item present for {sku_id}", "danger")
+            return redirect(url_for("htp"))
+    return render_template("increase_raw_product_request.html", title="Update HTP Quantity", form=form)
+
+
+@app.route("/products/raw/embroidery/increase", methods=["GET", "POST"])
+def increase_embroidery():
+    form = UpdateEmbroideryForm()
+    if form.validate_on_submit():
+        sku_id = form.sku_id.data
+        add_quantity = int(form.add_quantity.data)
+        embroidery = Embroidery.query.filter_by(
+            sku_id=sku_id).first()
+        if embroidery:
+            old_quantity = embroidery.total_quantity
+            new_quantity = old_quantity + add_quantity
+            embroidery.total_quantity = new_quantity
+            embroidery.updated_at = datetime.datetime.utcnow()
+            db.session.commit()
+            flash(
+                f"Updated quantity of product: {sku_id} from: {old_quantity} to: {new_quantity}", "success")
+            return render_template("update_embroidery_response.html",  title="Updated Embroidery Quantity", data=embroidery)
+        else:
+            flash(f"Oops! No Item present for {sku_id}", "danger")
+            return redirect(url_for("embroidery"))
+    return render_template("increase_raw_product_request.html", title="Update Embroidery Quantity", form=form)
 
 
 @app.route("/products/incoming/delete", methods=["POST"])
