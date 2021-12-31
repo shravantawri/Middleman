@@ -79,11 +79,11 @@
                     <td>{{ data["total_quantity"] }}</td>
                     <td>{{ data["updated_at"] }}</td>
                     <td>
-                        <img src="{{ url_for('get_qr_code', sku_id=data['sku_id'])}}">
+                        <img src="{{ url_for('get_qr_code', raw_item='plain_clothing', sku_id=data['sku_id'])}}">
                         <div style="margin-top: 1rem; text-align: center">
                             <button
                                 style="background-color: #63b3ed; border: none; color: #fff; cursor: pointer; padding: 0.5rem 1rem"
-                                , onclick="printImg(this)" , id="{{ url_for('get_qr_code', sku_id=data['sku_id'])}}">
+                                , onclick="printImg(this)" , id="{{ url_for('get_qr_code', raw_item='plain_clothing', sku_id=data['sku_id'])}}">
                                 Print
                             </button>
                         </div>

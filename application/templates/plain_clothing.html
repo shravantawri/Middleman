@@ -86,11 +86,11 @@
                     <td>{{ data["sleeve_type"] }}</td>
                     <td>{{ data["size"] }}</td>
                     <td>
-                        <img src="{{ url_for('get_qr_code', sku_id=data['sku_id'])}}">
+                        <img src="{{ url_for('get_qr_code', raw_item='plain_clothing',sku_id=data['sku_id'])}}">
                         <div style="margin-top: 1rem; text-align: center">
                             <button
                                 style="background-color: #63b3ed; border: none; color: #fff; cursor: pointer; padding: 0.5rem 1rem"
-                                , onclick="printImg(this)" , id="{{ url_for('get_qr_code', sku_id=data['sku_id'])}}">
+                                , onclick="printImg(this)" , id="{{ url_for('get_qr_code', raw_item='plain_clothing', sku_id=data['sku_id'])}}">
                                 Print
                             </button>
                         </div>
@@ -105,6 +105,12 @@
                         </script>
                     </td>
                     <td>
+                        <a href="{{url_for('decrease_plain_clothing', sku_id=data['sku_id'])}}"
+                        ><input type="”button”" value="Decrease Quantity"
+                        /></a>
+                        <a href="{{url_for('increase_plain_clothing', sku_id=data['sku_id'])}}"
+                        ><input type="”button”" value="Increase Quantity"
+                        /></a>
                         <form action="{{url_for('delete_incoming_product')}}" method="POST">
                             <input type="hidden" name="sku_id" value="{{data['sku_id']}}">
                             <button>Delete Product</button>

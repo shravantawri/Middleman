@@ -22,15 +22,17 @@ def get_by_id(id_):
         return(str(e))
 
 
-@app.route("/qr_code/<sku_id>", methods=['GET'])
-def get_qr_code(sku_id):
+@app.route("/qr_code/<raw_item>/<sku_id>", methods=['GET'])
+def get_qr_code(raw_item, sku_id):
     # Import QRCode from pyqrcode
     import pyqrcode
     import png
     from pyqrcode import QRCode
 
     # Generate QR code
-    url = pyqrcode.create(sku_id)
+    value = 'http://127.0.0.1:5000/products/raw/'+raw_item+'/'+sku_id+'/decrease'
+    print(value)
+    url = pyqrcode.create(value)
 
     # Create and save the svg file naming "myqr.svg"
     # url.svg("myqr.svg", scale=8)
@@ -191,8 +193,11 @@ def add_htp():
 
 
 @app.route("/products/raw/plain_clothing/increase", methods=["GET", "POST"])
-def increase_plain_clothing():
+@app.route("/products/raw/plain_clothing/<sku_id>/increase", methods=["GET", "POST"])
+def increase_plain_clothing(sku_id=None):
     form = IncreasePlainClothingForm()
+    if sku_id:
+        form.sku_id.data = sku_id
     if form.validate_on_submit():
         sku_id = form.sku_id.data
         add_quantity = form.add_quantity.data
@@ -214,8 +219,11 @@ def increase_plain_clothing():
 
 
 @app.route("/products/raw/htp/increase", methods=["GET", "POST"])
-def increase_htp():
+@app.route("/products/raw/htp/<sku_id>/increase", methods=["GET", "POST"])
+def increase_htp(sku_id=None):
     form = IncreaseHtpForm()
+    if sku_id:
+        form.sku_id.data = sku_id
     if form.validate_on_submit():
         sku_id = form.sku_id.data
         add_quantity = form.add_quantity.data
@@ -237,8 +245,11 @@ def increase_htp():
 
 
 @app.route("/products/raw/embroidery/increase", methods=["GET", "POST"])
-def increase_embroidery():
+@app.route("/products/raw/embroidery/<sku_id>/increase", methods=["GET", "POST"])
+def increase_embroidery(sku_id=None):
     form = IncreaseEmbroideryForm()
+    if sku_id:
+        form.sku_id.data = sku_id
     if form.validate_on_submit():
         sku_id = form.sku_id.data
         add_quantity = form.add_quantity.data
@@ -306,8 +317,11 @@ def supplier(term=None):
 
 
 @app.route("/products/raw/plain_clothing/decrease", methods=["GET", "POST"])
-def decrease_plain_clothing():
+@app.route("/products/raw/plain_clothing/<sku_id>/decrease", methods=["GET", "POST"])
+def decrease_plain_clothing(sku_id=None):
     form = DecreasePlainClothingForm()
+    if sku_id:
+        form.sku_id.data = sku_id
     if form.validate_on_submit():
         sku_id = form.sku_id.data
         delete_quantity = form.delete_quantity.data
@@ -329,8 +343,11 @@ def decrease_plain_clothing():
 
 
 @app.route("/products/raw/htp/decrease", methods=["GET", "POST"])
-def decrease_htp():
+@app.route("/products/raw/htp/<sku_id>/decrease", methods=["GET", "POST"])
+def decrease_htp(sku_id=None):
     form = DecreaseHtpForm()
+    if sku_id:
+        form.sku_id.data = sku_id
     if form.validate_on_submit():
         sku_id = form.sku_id.data
         delete_quantity = form.delete_quantity.data
@@ -352,8 +369,11 @@ def decrease_htp():
 
 
 @app.route("/products/raw/embroidery/decrease", methods=["GET", "POST"])
-def decrease_embroidery():
+@app.route("/products/raw/embroidery/<sku_id>/decrease", methods=["GET", "POST"])
+def decrease_embroidery(sku_id=None):
     form = DecreaseEmbroideryForm()
+    if sku_id:
+        form.sku_id.data = sku_id
     if form.validate_on_submit():
         sku_id = form.sku_id.data
         delete_quantity = form.delete_quantity.data
