@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField
 from wtforms.validators import DataRequired, Email, Length, EqualTo, ValidationError
 from application.models import User, Supplier, IncomingProduct, ProductSupplier, PlainClothing, Htp, Embroidery
 
@@ -109,9 +109,9 @@ class AddHtpForm(FlaskForm):
                 "Supplier not present for this particular ID")
 
 
-class UpdatePlainClothingForm(FlaskForm):
+class IncreasePlainClothingForm(FlaskForm):
     sku_id = StringField("SKU Id", validators=[DataRequired()])
-    add_quantity = StringField("Add Quantity", validators=[DataRequired()])
+    add_quantity = IntegerField("Add Quantity", validators=[DataRequired()])
     submit = SubmitField("Update")
 
     def validate_sku_id(self, sku_id):
@@ -122,9 +122,9 @@ class UpdatePlainClothingForm(FlaskForm):
                 f'Product for SKU ID: {sku_id.data} is not present. Please add plain clothing')
 
 
-class UpdateHtpForm(FlaskForm):
+class IncreaseHtpForm(FlaskForm):
     sku_id = StringField("SKU Id", validators=[DataRequired()])
-    add_quantity = StringField("Add Quantity", validators=[DataRequired()])
+    add_quantity = IntegerField("Add Quantity", validators=[DataRequired()])
     submit = SubmitField("Update")
 
     def validate_sku_id(self, sku_id):
@@ -135,9 +135,9 @@ class UpdateHtpForm(FlaskForm):
                 f'Product for SKU ID: {sku_id.data} is not present. Please add HTP')
 
 
-class UpdateEmbroideryForm(FlaskForm):
+class IncreaseEmbroideryForm(FlaskForm):
     sku_id = StringField("SKU Id", validators=[DataRequired()])
-    add_quantity = StringField("Add Quantity", validators=[DataRequired()])
+    add_quantity = IntegerField("Add Quantity", validators=[DataRequired()])
     submit = SubmitField("Update")
 
     def validate_sku_id(self, sku_id):
@@ -146,3 +146,72 @@ class UpdateEmbroideryForm(FlaskForm):
         if not embroidery:
             raise ValidationError(
                 f'Product for SKU ID: {sku_id.data} is not present. Please add embroidery')
+
+
+class DecreasePlainClothingForm(FlaskForm):
+    sku_id = StringField("SKU Id", validators=[DataRequired()])
+    delete_quantity = IntegerField(
+        "Delete Quantity", validators=[DataRequired()])
+    submit = SubmitField("Update")
+
+    def validate(self):
+        if not FlaskForm.validate(self):
+            return False
+        result = True
+        plain_clothing = PlainClothing.query.filter_by(
+            sku_id=self.sku_id.data).first()
+        if not plain_clothing:
+            self.sku_id.errors.append(
+                f'Product for SKU ID: {self.sku_id.data} is not present. Please add plain clothing')
+            return False
+        if plain_clothing.total_quantity < self.delete_quantity.data:
+            self.delete_quantity.errors.append(
+                f'Product for SKU ID: {self.sku_id.data}, only {plain_clothing.total_quantity} units are available')
+            return False
+        return result
+
+
+class DecreaseHtpForm(FlaskForm):
+    sku_id = StringField("SKU Id", validators=[DataRequired()])
+    delete_quantity = IntegerField(
+        "Delete Quantity", validators=[DataRequired()])
+    submit = SubmitField("Update")
+
+    def validate(self):
+        if not FlaskForm.validate(self):
+            return False
+        result = True
+        htp = Htp.query.filter_by(
+            sku_id=self.sku_id.data).first()
+        if not htp:
+            self.sku_id.errors.append(
+                f'Product for SKU ID: {self.sku_id.data} is not present. Please add htp')
+            return False
+        if htp.total_quantity < self.delete_quantity.data:
+            self.delete_quantity.errors.append(
+                f'Product for SKU ID: {self.sku_id.data}, only {htp.total_quantity} units are available')
+            return False
+        return result
+
+
+class DecreaseEmbroideryForm(FlaskForm):
+    sku_id = StringField("SKU Id", validators=[DataRequired()])
+    delete_quantity = IntegerField(
+        "Delete Quantity", validators=[DataRequired()])
+    submit = SubmitField("Update")
+
+    def validate(self):
+        if not FlaskForm.validate(self):
+            return False
+        result = True
+        embroidery = Embroidery.query.filter_by(
+            sku_id=self.sku_id.data).first()
+        if not embroidery:
+            self.sku_id.errors.append(
+                f'Product for SKU ID: {self.sku_id.data} is not present. Please add embroidery')
+            return False
+        if embroidery.total_quantity < self.delete_quantity.data:
+            self.delete_quantity.errors.append(
+                f'Product for SKU ID: {self.sku_id.data}, only {embroidery.total_quantity} units are available')
+            return False
+        return result

@@ -3,7 +3,8 @@ import os
 from application import app, models, db
 from flask import render_template, request, json, Response, jsonify, redirect, flash, url_for
 from application.models import User, Enrollment, Supplier, IncomingProduct, ProductSupplier, PlainClothing, Embroidery, Htp
-from application.forms import RegistrationForm, SupplierForm, AddPlainClothingForm, UpdatePlainClothingForm, AddPlainClothingForm, AddEmbroideryForm, AddHtpForm, UpdateEmbroideryForm, UpdateHtpForm
+from application.forms import RegistrationForm, SupplierForm, AddPlainClothingForm, IncreasePlainClothingForm, AddPlainClothingForm, AddEmbroideryForm, AddHtpForm, IncreaseEmbroideryForm, IncreaseHtpForm
+from application.forms import DecreasePlainClothingForm, DecreaseHtpForm, DecreaseEmbroideryForm
 
 
 @app.route("/")
@@ -191,10 +192,10 @@ def add_htp():
 
 @app.route("/products/raw/plain_clothing/increase", methods=["GET", "POST"])
 def increase_plain_clothing():
-    form = UpdatePlainClothingForm()
+    form = IncreasePlainClothingForm()
     if form.validate_on_submit():
         sku_id = form.sku_id.data
-        add_quantity = int(form.add_quantity.data)
+        add_quantity = form.add_quantity.data
         plain_clothing = PlainClothing.query.filter_by(
             sku_id=sku_id).first()
         if plain_clothing:
@@ -214,10 +215,10 @@ def increase_plain_clothing():
 
 @app.route("/products/raw/htp/increase", methods=["GET", "POST"])
 def increase_htp():
-    form = UpdateHtpForm()
+    form = IncreaseHtpForm()
     if form.validate_on_submit():
         sku_id = form.sku_id.data
-        add_quantity = int(form.add_quantity.data)
+        add_quantity = form.add_quantity.data
         htp = Htp.query.filter_by(
             sku_id=sku_id).first()
         if htp:
@@ -237,10 +238,10 @@ def increase_htp():
 
 @app.route("/products/raw/embroidery/increase", methods=["GET", "POST"])
 def increase_embroidery():
-    form = UpdateEmbroideryForm()
+    form = IncreaseEmbroideryForm()
     if form.validate_on_submit():
         sku_id = form.sku_id.data
-        add_quantity = int(form.add_quantity.data)
+        add_quantity = form.add_quantity.data
         embroidery = Embroidery.query.filter_by(
             sku_id=sku_id).first()
         if embroidery:
@@ -302,3 +303,72 @@ def supplier(term=None):
     supplier_data = Supplier.query.all()
 
     return render_template("supplier.html", supplierData=supplier_data, supplier=True)
+
+
+@app.route("/products/raw/plain_clothing/decrease", methods=["GET", "POST"])
+def decrease_plain_clothing():
+    form = DecreasePlainClothingForm()
+    if form.validate_on_submit():
+        sku_id = form.sku_id.data
+        delete_quantity = form.delete_quantity.data
+        plain_clothing = PlainClothing.query.filter_by(
+            sku_id=sku_id).first()
+        if plain_clothing:
+            old_quantity = plain_clothing.total_quantity
+            new_quantity = old_quantity - delete_quantity
+            plain_clothing.total_quantity = new_quantity
+            plain_clothing.updated_at = datetime.datetime.utcnow()
+            db.session.commit()
+            flash(
+                f"Updated quantity of product: {sku_id} from: {old_quantity} to: {new_quantity}", "success")
+            return render_template("update_plain_clothing_response.html", title="Updated Plain Clothing Quantity", data=plain_clothing)
+        else:
+            flash(f"Oops! No Item present for {sku_id}", "danger")
+            return redirect(url_for("plain_clothing"))
+    return render_template("decrease_raw_product_request.html", title="Update Plain Clothing Quantity", form=form)
+
+
+@app.route("/products/raw/htp/decrease", methods=["GET", "POST"])
+def decrease_htp():
+    form = DecreaseHtpForm()
+    if form.validate_on_submit():
+        sku_id = form.sku_id.data
+        delete_quantity = form.delete_quantity.data
+        htp = Htp.query.filter_by(
+            sku_id=sku_id).first()
+        if htp:
+            old_quantity = htp.total_quantity
+            new_quantity = old_quantity - delete_quantity
+            htp.total_quantity = new_quantity
+            htp.updated_at = datetime.datetime.utcnow()
+            db.session.commit()
+            flash(
+                f"Updated quantity of product: {sku_id} from: {old_quantity} to: {new_quantity}", "success")
+            return render_template("update_htp_response.html",  title="Updated HTP Quantity", data=htp)
+        else:
+            flash(f"Oops! No Item present for {sku_id}", "danger")
+            return redirect(url_for("htp"))
+    return render_template("decrease_raw_product_request.html", title="Update HTP Quantity", form=form)
+
+
+@app.route("/products/raw/embroidery/decrease", methods=["GET", "POST"])
+def decrease_embroidery():
+    form = DecreaseEmbroideryForm()
+    if form.validate_on_submit():
+        sku_id = form.sku_id.data
+        delete_quantity = form.delete_quantity.data
+        embroidery = Embroidery.query.filter_by(
+            sku_id=sku_id).first()
+        if embroidery:
+            old_quantity = embroidery.total_quantity
+            new_quantity = old_quantity - delete_quantity
+            embroidery.total_quantity = new_quantity
+            embroidery.updated_at = datetime.datetime.utcnow()
+            db.session.commit()
+            flash(
+                f"Updated quantity of product: {sku_id} from: {old_quantity} to: {new_quantity}", "success")
+            return render_template("update_embroidery_response.html",  title="Updated Embroidery Quantity", data=embroidery)
+        else:
+            flash(f"Oops! No Item present for {sku_id}", "danger")
+            return redirect(url_for("embroidery"))
+    return render_template("decrease_raw_product_request.html", title="Update Embroidery Quantity", form=form)
