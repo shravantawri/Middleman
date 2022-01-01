@@ -69,7 +69,7 @@ def view_plain_clothing(term=None):
     plain_clothing_data = PlainClothing.query.order_by(
         PlainClothing.updated_at.desc()).all()
 
-    return render_template("plain_clothing.html", plainClothingData=plain_clothing_data, plain_clothing=True)
+    return render_template("plain_clothing.html", plainClothingData=plain_clothing_data, view=True, title="Plain Clothing")
 
 
 @app.route("/products/raw/embroidery")
@@ -77,15 +77,39 @@ def view_embroidery(term=None):
     embroidery_data = Embroidery.query.order_by(
         Embroidery.updated_at.desc()).all()
 
-    return render_template("embroidery.html", embroideryData=embroidery_data, embroidery=True)
+    return render_template("embroidery.html", embroideryData=embroidery_data, view=True, title="Embroidery")
 
 
 @app.route("/products/raw/htp")
-def view_htp(term=None):
+def view_htp():
     htp_data = Htp.query.order_by(
         Htp.updated_at.desc()).all()
 
-    return render_template("htp.html", htpData=htp_data, htp=True)
+    return render_template("htp.html", htpData=htp_data, view=True, title="HTP")
+
+
+@app.route("/products/raw/plain_clothing/top_sku")
+def view_plain_clothing_top_skus():
+    plain_clothing_data = PlainClothing.query.order_by(
+        PlainClothing.quantity_debit_count.desc()).all()
+
+    return render_template("plain_clothing.html", plainClothingData=plain_clothing_data, top_sku=True, title="Plain Clothing Top SKUs")
+
+
+@app.route("/products/raw/embroidery/top_sku")
+def view_embroidery_top_skus():
+    embroidery_data = Embroidery.query.order_by(
+        Embroidery.quantity_debit_count.desc()).all()
+
+    return render_template("embroidery.html", embroideryData=embroidery_data, top_sku=True, title="Embroidery Top SKUs")
+
+
+@app.route("/products/raw/htp/top_sku")
+def view_htp_top_skus():
+    htp_data = Htp.query.order_by(
+        Htp.quantity_debit_count.desc()).all()
+
+    return render_template("htp.html", htpData=htp_data, top_sku=True, title="HTP Top SKUs")
 
 
 @app.route("/products/raw/plain_clothing/add", methods=["GET", "POST"])
@@ -331,6 +355,7 @@ def decrease_plain_clothing(sku_id=None):
             old_quantity = plain_clothing.total_quantity
             new_quantity = old_quantity - delete_quantity
             plain_clothing.total_quantity = new_quantity
+            plain_clothing.quantity_debit_count += delete_quantity
             plain_clothing.updated_at = datetime.datetime.utcnow()
             db.session.commit()
             flash(
@@ -357,6 +382,7 @@ def decrease_htp(sku_id=None):
             old_quantity = htp.total_quantity
             new_quantity = old_quantity - delete_quantity
             htp.total_quantity = new_quantity
+            htp.quantity_debit_count += delete_quantity
             htp.updated_at = datetime.datetime.utcnow()
             db.session.commit()
             flash(
@@ -383,6 +409,7 @@ def decrease_embroidery(sku_id=None):
             old_quantity = embroidery.total_quantity
             new_quantity = old_quantity - delete_quantity
             embroidery.total_quantity = new_quantity
+            embroidery.quantity_debit_count += delete_quantity
             embroidery.updated_at = datetime.datetime.utcnow()
             db.session.commit()
             flash(

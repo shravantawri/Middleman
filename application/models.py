@@ -133,10 +133,11 @@ class PlainClothing(db.Model):
     reorder_point = db.Column(db.Integer)
     demand = db.Column(db.Integer)
     total_quantity = db.Column(db.Integer)
+    quantity_debit_count = db.Column(db.Integer)
     created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow())
     updated_at = db.Column(db.DateTime, default=datetime.datetime.utcnow())
 
-    def __init__(self, sku_id, color, material, sleeve_type, size, location, reorder_point, demand, total_quantity, updated_at=None):
+    def __init__(self, sku_id, color, material, sleeve_type, size, location, reorder_point, demand, total_quantity, quantity_debit_count=0, updated_at=None):
         self.sku_id = sku_id
         self.color = color
         self.material = material
@@ -146,6 +147,7 @@ class PlainClothing(db.Model):
         self.reorder_point = reorder_point
         self.demand = demand
         self.total_quantity = total_quantity
+        self.quantity_debit_count = quantity_debit_count
         self.updated_at = updated_at or datetime.datetime.utcnow()
 
     def __repr__(self):
@@ -163,6 +165,7 @@ class PlainClothing(db.Model):
             'reorder_point': self.reorder_point,
             'demand': self.demand,
             'total_quantity': self.total_quantity,
+            'quantity_debit_count': self.quantity_debit_count,
             'created_at': self.created_at,
             'updated_at': self.updated_at
         }
@@ -176,15 +179,17 @@ class Htp(db.Model):
     reorder_point = db.Column(db.Integer)
     demand = db.Column(db.Integer)
     total_quantity = db.Column(db.Integer)
+    quantity_debit_count = db.Column(db.Integer)
     created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow())
     updated_at = db.Column(db.DateTime, default=datetime.datetime.utcnow())
 
-    def __init__(self, sku_id, location, reorder_point, demand, total_quantity, updated_at=None):
+    def __init__(self, sku_id, location, reorder_point, demand, total_quantity, quantity_debit_count=0, updated_at=None):
         self.sku_id = sku_id
         self.location = location
         self.reorder_point = reorder_point
         self.demand = demand
         self.total_quantity = total_quantity
+        self.quantity_debit_count = quantity_debit_count
         self.updated_at = updated_at or datetime.datetime.utcnow()
 
     def __repr__(self):
@@ -198,6 +203,7 @@ class Htp(db.Model):
             'reorder_point': self.reorder_point,
             'demand': self.demand,
             'total_quantity': self.total_quantity,
+            'quantity_debit_count': self.quantity_debit_count,
             'created_at': self.created_at,
             'updated_at': self.updated_at
         }
@@ -212,16 +218,18 @@ class Embroidery(db.Model):
     reorder_point = db.Column(db.Integer)
     demand = db.Column(db.Integer)
     total_quantity = db.Column(db.Integer)
+    quantity_debit_count = db.Column(db.Integer)
     created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow())
     updated_at = db.Column(db.DateTime, default=datetime.datetime.utcnow())
 
-    def __init__(self, sku_id, color,  location, reorder_point, demand, total_quantity, updated_at=None):
+    def __init__(self, sku_id, color,  location, reorder_point, demand, total_quantity, quantity_debit_count=0, updated_at=None):
         self.sku_id = sku_id
         self.color = color
         self.location = location
         self.reorder_point = reorder_point
         self.demand = demand
         self.total_quantity = total_quantity
+        self.quantity_debit_count = quantity_debit_count
         self.updated_at = updated_at or datetime.datetime.utcnow()
 
     def __repr__(self):
@@ -236,6 +244,7 @@ class Embroidery(db.Model):
             'reorder_point': self.reorder_point,
             'demand': self.demand,
             'total_quantity': self.total_quantity,
+            'quantity_debit_count': self.quantity_debit_count,
             'created_at': self.created_at,
             'updated_at': self.updated_at
         }

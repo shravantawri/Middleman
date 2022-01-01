@@ -51,11 +51,11 @@
         <a href="{{url_for('increase_htp')}}">Increase Quantity</a>
         <a href="{{url_for('decrease_htp')}}">Decrease Quantity</a>
         <a href="#">Logs</a>
-        <a href="#">Top SKUs</a>
+        <a href="{{url_for('view_htp_top_skus')}}">Top SKUs</a>
         <a href="#">Delete</a>
     </div>
     <div class="main">
-        <h1>HTP</h1>
+        <h1>{{title}}</h1>
         <table class="table table-hover">
             <thead>
                 <tr>
@@ -64,8 +64,12 @@
                     <th scope="col">Reorder Point</th>
                     <th scope="col">Demand</th>
                     <th scope="col">Quantity</th>
+                    {% if view %}
                     <th scope="col">Time</th>
                     <th scope="col">QR Code</th>
+                    {% elif top_sku %}
+                    <th scope="col">Total Debited Quantity</th>
+                    {% endif %}
                 </tr>
             </thead>
             <tbody>
@@ -76,6 +80,7 @@
                     <td>{{ data["reorder_point"] }}</td>
                     <td>{{ data["demand"] }}</td>
                     <td>{{ data["total_quantity"] }}</td>
+                    {% if view %}
                     <td>{{ data["updated_at"] }}</td>
                     <td>
                         <img src="{{ url_for('get_qr_code', raw_item='htp', sku_id=data['sku_id'])}}">
@@ -108,10 +113,11 @@
                             <button>Delete Product</button>
                         </form>
                     </td>
+                    {% elif top_sku %}
+                    <td>{{ data["quantity_debit_count"] }}</td>
+                    {% endif %}
                 </tr>
                 {% endfor %}
-
-
             </tbody>
         </table>
     </div>
