@@ -1,0 +1,89 @@
+{% extends "layout.html" %} {% block content %}
+<style>
+  .sidenav {
+    height: 100%;
+    width: 160px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    padding-top: 20px;
+  }
+
+  .sidenav a {
+    padding: 6px 8px 6px 16px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #818181;
+    display: block;
+  }
+
+  .sidenav a:hover {
+    color: #f1f1f1;
+  }
+
+  .main {
+    margin-left: 160px;
+    padding: 0px 10px;
+    font-family: Arial, Helvetica, sans-serif;
+    height: 100%;
+    position: relative;
+  }
+
+  @media screen and (max-height: 450px) {
+    .sidenav {
+      padding-top: 15px;
+    }
+
+    .sidenav a {
+      font-size: 18px;
+    }
+  }
+</style>
+
+<div>
+  <div class="sidenav">
+    <a href="{{ url_for('add_plain_clothing') }}">Create New</a>
+    <a href="{{url_for('increase_plain_clothing')}}">Ship Item</a>
+    <a href="#">Logs</a>
+    <a href="{{url_for('view_plain_clothing_top_skus')}}">Top SKUs</a>
+    <a href="#">Delete</a>
+  </div>
+  <div class="main">
+    <h1>{{title}}</h1>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col">SKU ID</th>
+          <th scope="col">Location</th>
+          <th scope="col">Category</th>
+          <th scope="col">Quantity</th>
+          {% if view %}
+          <th scope="col">Time</th>
+          {% elif top_sku %}
+          <th scope="col">Total Debited Quantity</th>
+          {% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for data in htpData %}
+        <tr>
+          <td scope="row">{{ data["sku_id"] }}</td>
+          <td>{{ data["location"] }}</td>
+          <td>{{ data["category"] }}</td>
+          <td>{{ data["total_quantity"] }}</td>
+          {% if view %}
+          <td>{{ data["updated_at"] }}</td>
+          {% elif top_sku %}
+          <td>{{ data["quantity_debit_count"] }}</td>
+          {% endif %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}

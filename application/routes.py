@@ -2,7 +2,7 @@ import datetime
 import os
 from application import app, models, db
 from flask import render_template, request, json, Response, jsonify, redirect, flash, url_for
-from application.models import User, Enrollment, Supplier, IncomingProduct, ProductSupplier, PlainClothing, Embroidery, Htp
+from application.models import User, Enrollment, Supplier, IncomingProduct, ProductSupplier, PlainClothing, Embroidery, Htp, DesignClothing, DesignImprintedHtp
 from application.forms import RegistrationForm, SupplierForm, AddPlainClothingForm, IncreasePlainClothingForm, AddPlainClothingForm, AddEmbroideryForm, AddHtpForm, IncreaseEmbroideryForm, IncreaseHtpForm
 from application.forms import DecreasePlainClothingForm, DecreaseHtpForm, DecreaseEmbroideryForm
 
@@ -58,10 +58,28 @@ def incoming_products(term=None):
 
 @app.route("/products/raw")
 def raw_products(term=None):
-    raw_product_data = IncomingProduct.query.order_by(
-        IncomingProduct.updated_at.desc()).all()
+    return render_template("raw_products.html", raw_products=True)
 
-    return render_template("raw_products.html", incomingProductsData=raw_product_data, raw_product=True)
+
+@app.route("/products/end")
+def end_products(term=None):
+    return render_template("end_products.html", end_products=True)
+
+
+@app.route("/products/end/designed_clothing")
+def view_designed_clothing(term=None):
+    designed_clothing_data = DesignClothing.query.order_by(
+        DesignClothing.updated_at.desc()).all()
+
+    return render_template("designed_clothing.html", designedClothingData=designed_clothing_data, view=True, title="Designed Clothing")
+
+
+@app.route("/products/end/design_imprinted_htp")
+def view_design_imprinted_htp():
+    design_imprinted_htp_data = DesignImprintedHtp.query.order_by(
+        DesignImprintedHtp.updated_at.desc()).all()
+
+    return render_template("design_imprinted_htp.html", htpData=design_imprinted_htp_data, view=True, title="Design Imprinted HTP")
 
 
 @app.route("/products/raw/plain_clothing")
