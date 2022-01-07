@@ -7,8 +7,8 @@
 <div class="row">
     <div class="col-md-12 text-center">
 
-        {% if not incoming_product %}
-        <h1>No Product Present</h1>
+        {% if not data %}
+        <h1>No Plain Clothing Present</h1>
         {% else %}
 
         <table class="table table-hover">
@@ -19,6 +19,10 @@
                     <th scope="col">Demand</th>
                     <th scope="col">Reorder Point</th>
                     <th scope="col">Quantity</th>
+                    <th scope="col">Colour</th>
+                    <th scope="col">Material</th>
+                    <th scope="col">Sleeve Type</th>
+                    <th scope="col">Size</th>
                     <th scope="col">QR Code</th>
                 </tr>
             </thead>
@@ -26,17 +30,21 @@
 
                 <!-- Construct the rest of courses here -->
                 <tr>
-                    <td scope='row'>{{ incoming_product["sku_id"] }}</td>
-                    <td>{{ incoming_product["location"] }}</td>
-                    <td>{{ incoming_product["demand"] }}</td>
-                    <td>{{ incoming_product["reorder_point"] }}</td>
-                    <td>{{ incoming_product["total_quantity"] }}</td>
+                    <td scope='row'>{{ data["sku_id"] }}</td>
+                    <td>{{ data["location"] }}</td>
+                    <td>{{ data["demand"] }}</td>
+                    <td>{{ data["reorder_point"] }}</td>
+                    <td>{{ data["total_quantity"] }}</td>
+                    <td>{{ data["color"] }}</td>
+                    <td>{{ data["material"] }}</td>
+                    <td>{{ data["sleeve_type"] }}</td>
+                    <td>{{ data["size"] }}</td>
                     <td>
-                        <img src="{{ url_for('get_qr_code', sku_id=incoming_product['sku_id'])}}">
+                        <img src="{{ url_for('get_qr_code', raw_item='plain_clothing',sku_id=data['sku_id'])}}">
                         <div style="margin-top: 1rem; text-align: center">
                             <button
                                 style="background-color: #63b3ed; border: none; color: #fff; cursor: pointer; padding: 0.5rem 1rem"
-                                , onclick="printImg(this)" , id="{{ url_for('get_qr_code', sku_id=incoming_product['sku_id'])}}">
+                                , onclick="printImg(this)" , id="{{ url_for('get_qr_code', raw_item='plain_clothing',sku_id=data['sku_id'])}}">
                                 Print
                             </button>
                         </div>

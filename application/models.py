@@ -124,22 +124,31 @@ class IncomingProduct(db.Model):
 class PlainClothing(db.Model):
     __tablename__ = 'plain_clothing'
     id = db.Column(db.Integer, primary_key=True)
-    incoming_product_id = db.Column(
-        db.Integer, db.ForeignKey('incoming_products.id'), unique=True)
-    incoming_product_sku_id = db.Column(
-        db.Integer, db.ForeignKey('incoming_products.sku_id'), unique=True)
+    sku_id = db.Column(db.Integer, unique=True)
     color = db.Column(db.String)
     material = db.Column(db.String)
     sleeve_type = db.Column(db.String)
     size = db.Column(db.String)
+    location = db.Column(db.String)
+    reorder_point = db.Column(db.Integer)
+    demand = db.Column(db.Integer)
+    total_quantity = db.Column(db.Integer)
+    quantity_debit_count = db.Column(db.Integer)
+    created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow())
+    updated_at = db.Column(db.DateTime, default=datetime.datetime.utcnow())
 
-    def __init__(self, incoming_product_id, incoming_product_sku_id, color, material, sleeve_type, size):
-        self.incoming_product_id = incoming_product_id
-        self.incoming_product_sku_id = incoming_product_sku_id
+    def __init__(self, sku_id, color, material, sleeve_type, size, location, reorder_point, demand, total_quantity, quantity_debit_count=0, updated_at=None):
+        self.sku_id = sku_id
         self.color = color
         self.material = material
         self.sleeve_type = sleeve_type
         self.size = size
+        self.location = location
+        self.reorder_point = reorder_point
+        self.demand = demand
+        self.total_quantity = total_quantity
+        self.quantity_debit_count = quantity_debit_count
+        self.updated_at = updated_at or datetime.datetime.utcnow()
 
     def __repr__(self):
         return '<id {}>'.format(self.id)
@@ -147,12 +156,182 @@ class PlainClothing(db.Model):
     def serialize(self):
         return {
             'id': self.id,
-            'incoming_product_id': self.incoming_product_id,
-            'incoming_product_sku_id': self.incoming_product_sku_id,
+            'sku_id': self.sku_id,
             'color': self.color,
             'material': self.material,
             'sleeve_type': self.sleeve_type,
-            'size': self.size
+            'size': self.size,
+            'location': self.location,
+            'reorder_point': self.reorder_point,
+            'demand': self.demand,
+            'total_quantity': self.total_quantity,
+            'quantity_debit_count': self.quantity_debit_count,
+            'created_at': self.created_at,
+            'updated_at': self.updated_at
+        }
+
+
+class Htp(db.Model):
+    __tablename__ = 'htp'
+    id = db.Column(db.Integer, primary_key=True)
+    sku_id = db.Column(db.Integer, unique=True)
+    location = db.Column(db.String)
+    reorder_point = db.Column(db.Integer)
+    demand = db.Column(db.Integer)
+    total_quantity = db.Column(db.Integer)
+    quantity_debit_count = db.Column(db.Integer)
+    created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow())
+    updated_at = db.Column(db.DateTime, default=datetime.datetime.utcnow())
+
+    def __init__(self, sku_id, location, reorder_point, demand, total_quantity, quantity_debit_count=0, updated_at=None):
+        self.sku_id = sku_id
+        self.location = location
+        self.reorder_point = reorder_point
+        self.demand = demand
+        self.total_quantity = total_quantity
+        self.quantity_debit_count = quantity_debit_count
+        self.updated_at = updated_at or datetime.datetime.utcnow()
+
+    def __repr__(self):
+        return '<id {}>'.format(self.id)
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'sku_id': self.sku_id,
+            'location': self.location,
+            'reorder_point': self.reorder_point,
+            'demand': self.demand,
+            'total_quantity': self.total_quantity,
+            'quantity_debit_count': self.quantity_debit_count,
+            'created_at': self.created_at,
+            'updated_at': self.updated_at
+        }
+
+
+class Embroidery(db.Model):
+    __tablename__ = 'embroidery'
+    id = db.Column(db.Integer, primary_key=True)
+    sku_id = db.Column(db.Integer, unique=True)
+    color = db.Column(db.String)
+    location = db.Column(db.String)
+    reorder_point = db.Column(db.Integer)
+    demand = db.Column(db.Integer)
+    total_quantity = db.Column(db.Integer)
+    quantity_debit_count = db.Column(db.Integer)
+    created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow())
+    updated_at = db.Column(db.DateTime, default=datetime.datetime.utcnow())
+
+    def __init__(self, sku_id, color,  location, reorder_point, demand, total_quantity, quantity_debit_count=0, updated_at=None):
+        self.sku_id = sku_id
+        self.color = color
+        self.location = location
+        self.reorder_point = reorder_point
+        self.demand = demand
+        self.total_quantity = total_quantity
+        self.quantity_debit_count = quantity_debit_count
+        self.updated_at = updated_at or datetime.datetime.utcnow()
+
+    def __repr__(self):
+        return '<id {}>'.format(self.id)
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'sku_id': self.sku_id,
+            'color': self.color,
+            'location': self.location,
+            'reorder_point': self.reorder_point,
+            'demand': self.demand,
+            'total_quantity': self.total_quantity,
+            'quantity_debit_count': self.quantity_debit_count,
+            'created_at': self.created_at,
+            'updated_at': self.updated_at
+        }
+
+
+class DesignImprintedHtp(db.Model):
+    __tablename__ = 'design_imprinted_htp'
+    id = db.Column(db.Integer, primary_key=True)
+    sku_id = db.Column(db.Integer, unique=True)
+    location = db.Column(db.String)
+    category = db.Column(db.String)
+    total_quantity = db.Column(db.Integer)
+    quantity_debit_count = db.Column(db.Integer)
+    created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow())
+    updated_at = db.Column(db.DateTime, default=datetime.datetime.utcnow())
+
+    def __init__(self, sku_id, location, category, total_quantity, quantity_debit_count=0, updated_at=None):
+        self.sku_id = sku_id
+        self.location = location
+        self.category = category
+        self.total_quantity = total_quantity
+        self.quantity_debit_count = quantity_debit_count
+        self.updated_at = updated_at or datetime.datetime.utcnow()
+
+    def __repr__(self):
+        return '<id {}>'.format(self.id)
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'sku_id': self.sku_id,
+            'location': self.location,
+            'category': self.category,
+            'total_quantity': self.total_quantity,
+            'quantity_debit_count': self.quantity_debit_count,
+            'created_at': self.created_at,
+            'updated_at': self.updated_at
+        }
+
+
+class DesignClothing(db.Model):
+    __tablename__ = 'design_clothing'
+    id = db.Column(db.Integer, primary_key=True)
+    sku_id = db.Column(db.Integer, unique=True)
+    color = db.Column(db.String)
+    material = db.Column(db.String)
+    sleeve_type = db.Column(db.String)
+    size = db.Column(db.String)
+    location = db.Column(db.String)
+    image_url = db.Column(db.String)
+    category = db.Column(db.String)
+    total_quantity = db.Column(db.Integer)
+    quantity_debit_count = db.Column(db.Integer)
+    created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow())
+    updated_at = db.Column(db.DateTime, default=datetime.datetime.utcnow())
+
+    def __init__(self, sku_id, color, material, sleeve_type, size, location, image_url, category, total_quantity, quantity_debit_count=0, updated_at=None):
+        self.sku_id = sku_id
+        self.color = color
+        self.material = material
+        self.sleeve_type = sleeve_type
+        self.size = size
+        self.location = location
+        self.image_url = image_url
+        self.category = category
+        self.total_quantity = total_quantity
+        self.quantity_debit_count = quantity_debit_count
+        self.updated_at = updated_at or datetime.datetime.utcnow()
+
+    def __repr__(self):
+        return '<id {}>'.format(self.id)
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'sku_id': self.sku_id,
+            'color': self.color,
+            'material': self.material,
+            'sleeve_type': self.sleeve_type,
+            'size': self.size,
+            'location': self.location,
+            'image_url': self.image_url,
+            'category': self.category,
+            'total_quantity': self.total_quantity,
+            'quantity_debit_count': self.quantity_debit_count,
+            'created_at': self.created_at,
+            'updated_at': self.updated_at
         }
 
 
@@ -160,9 +339,8 @@ class ProductSupplier(db.Model):
     __tablename__ = 'product_supplier'
 
     id = db.Column(db.Integer, primary_key=True)
-    product_id = db.Column(db.Integer, db.ForeignKey('incoming_products.id'))
-    product_sku_id = db.Column(
-        db.Integer, db.ForeignKey('incoming_products.sku_id'))
+    product_id = db.Column(db.Integer)
+    product_sku_id = db.Column(db.Integer)
     supplier_id = db.Column(db.Integer, db.ForeignKey('supplier.id'))
 
     def __init__(self, product_id, product_sku_id, supplier_id):

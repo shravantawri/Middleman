@@ -1,0 +1,15 @@
+{% extends "layout.html" %} {% block content %}
+
+<div>
+  <div class="main">
+    <h1>End Products</h1>
+    <a href="{{ url_for('view_design_imprinted_htp') }}"
+      ><input type="”button”" value="Design Imprinted HTP"
+    /></a>
+    <a href="{{ url_for('view_designed_clothing') }}"
+      ><input type="”button”" value="Designed Clothing"
+    /></a>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<h1>{{ title }} </h1>
+
+<div class="row">
+    <div class="col-md-12 text-center">
+
+        {% if not data %}
+        <h1>No HTP Present</h1>
+        {% else %}
+
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">SKU ID</th>
+                    <th scope="col">Location </th>
+                    <th scope="col">Demand</th>
+                    <th scope="col">Reorder Point</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">QR Code</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                <!-- Construct the rest of courses here -->
+                <tr>
+                    <td scope='row'>{{ data["sku_id"] }}</td>
+                    <td>{{ data["location"] }}</td>
+                    <td>{{ data["demand"] }}</td>
+                    <td>{{ data["reorder_point"] }}</td>
+                    <td>{{ data["total_quantity"] }}</td>
+                    <td>
+                        <img src="{{ url_for('get_qr_code', raw_item='htp', sku_id=data['sku_id'])}}">
+                        <div style="margin-top: 1rem; text-align: center">
+                            <button
+                                style="background-color: #63b3ed; border: none; color: #fff; cursor: pointer; padding: 0.5rem 1rem"
+                                , onclick="printImg(this)" , id="{{ url_for('get_qr_code', raw_item='htp', sku_id=data['sku_id'])}}">
+                                Print
+                            </button>
+                        </div>
+                        </img>
+                        <script>
+                            function printImg(e) {
+                                url = e.id
+                                var win = window.open('');
+                                win.document.write('<img src="' + url + '" onload="window.print();window.close()" />');
+                                win.focus();
+                            }
+                        </script>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
