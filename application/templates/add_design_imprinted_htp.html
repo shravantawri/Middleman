@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="container">
+    <form name="design_imprinted_htp" action="" method="post" novalidate>
+        <fieldset class="form-group">
+            <legend>{{title}}</legend>
+            {{ form.hidden_tag() }}
+            <p> {{ form.location.label }}</br>
+                {{ form.location }}
+                {% for error in form.location.errors %}
+                <span class="error-message">{{ error }}</span>
+                {% endfor %}
+            </p>
+
+            <p> {{ form.category.label }}</br>
+                {{ form.category }}
+                {% for error in form.category.errors %}
+                <span class="error-message">{{ error }}</span>
+                {% endfor %}
+            </p>
+
+            <p> {{ form.total_quantity.label }}</br>
+                {{ form.total_quantity }}
+                {% for error in form.total_quantity.errors %}
+                <span class="error-message">{{ error }}</span>
+                {% endfor %}
+            </p>
+
+            <p>
+                {{ form.submit() }}
+            </p>
+
+        </fieldset>
+    </form>
+</div>
+{% endblock %}

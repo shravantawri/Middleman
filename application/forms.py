@@ -215,3 +215,10 @@ class DecreaseEmbroideryForm(FlaskForm):
                 f'Product for SKU ID: {self.sku_id.data}, only {embroidery.total_quantity} units are available')
             return False
         return result
+
+
+class AddDesignImprintedHtpForm(FlaskForm):
+    location = StringField("Location", validators=[DataRequired()])
+    category = StringField("Category", validators=[DataRequired()])
+    total_quantity = StringField("Total Quantity", validators=[DataRequired()])
+    submit = SubmitField("Create")

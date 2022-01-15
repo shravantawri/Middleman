@@ -1,10 +1,11 @@
+from random import randint
 import datetime
 import os
 from application import app, models, db
 from flask import render_template, request, json, Response, jsonify, redirect, flash, url_for
 from application.models import User, Enrollment, Supplier, IncomingProduct, ProductSupplier, PlainClothing, Embroidery, Htp, DesignClothing, DesignImprintedHtp
 from application.forms import RegistrationForm, SupplierForm, AddPlainClothingForm, IncreasePlainClothingForm, AddPlainClothingForm, AddEmbroideryForm, AddHtpForm, IncreaseEmbroideryForm, IncreaseHtpForm
-from application.forms import DecreasePlainClothingForm, DecreaseHtpForm, DecreaseEmbroideryForm
+from application.forms import DecreasePlainClothingForm, DecreaseHtpForm, DecreaseEmbroideryForm, AddDesignImprintedHtpForm
 
 
 @app.route("/")
@@ -437,3 +438,32 @@ def decrease_embroidery(sku_id=None):
             flash(f"Oops! No Item present for {sku_id}", "danger")
             return redirect(url_for("embroidery"))
     return render_template("decrease_raw_product_request.html", title="Update Embroidery Quantity", form=form)
+
+
+@app.route("/products/end/design_imprinted_htp/add", methods=["GET", "POST"])
+def add_design_imprinted_htp():
+    form = AddDesignImprintedHtpForm()
+    if form.validate_on_submit():
+        location = form.location.data
+        category = form.category.data
+        total_quantity = form.total_quantity.data
+        sku_id = generate_sku_id()
+        design_imprinted_htp = DesignImprintedHtp(
+            sku_id=sku_id,
+            location=location,
+            category=category,
+            total_quantity=total_quantity,
+        )
+        db.session.add(design_imprinted_htp)
+        db.session.commit()
+        flash(
+            f'You have successfully created Design Imprinted HTP with SKU ID: {sku_id}', "success")
+        return redirect(url_for('view_design_imprinted_htp'))
+    return render_template("add_design_imprinted_htp.html", title="Create Design Imprinted HTP", form=form, add_htp=True)
+
+
+def generate_sku_id():
+    s = ''
+    for _ in range(5):
+        s = s + str(randint(0, 9))
+    return int(s)
