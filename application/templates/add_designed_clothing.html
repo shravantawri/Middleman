@@ -1,0 +1,73 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="container">
+    <form name="designed_clothing" action="" method="post" novalidate enctype="multipart/form-data">
+        <fieldset class="form-group">
+            <legend>{{title}}</legend>
+            {{ form.hidden_tag() }}
+            <p> {{ form.location.label }}</br>
+                {{ form.location }}
+                {% for error in form.location.errors %}
+                <span class="error-message">{{ error }}</span>
+                {% endfor %}
+            </p>
+
+            <p> {{ form.total_quantity.label }}</br>
+                {{ form.total_quantity }}
+                {% for error in form.total_quantity.errors %}
+                <span class="error-message">{{ error }}</span>
+                {% endfor %}
+            </p>
+
+            <p> {{ form.color.label }}</br>
+                {{ form.color }}
+                {% for error in form.color.errors %}
+                <span class="error-message">{{ error }}</span>
+                {% endfor %}
+            </p>
+
+            <p> {{ form.material.label }}</br>
+                {{ form.material }}
+                {% for error in form.material.errors %}
+                <span class="error-message">{{ error }}</span>
+                {% endfor %}
+            </p>
+
+            <p> {{ form.sleeve_type.label }}</br>
+                {{ form.sleeve_type }}
+                {% for error in form.sleeve_type.errors %}
+                <span class="error-message">{{ error }}</span>
+                {% endfor %}
+            </p>
+            
+            <p> {{ form.size.label }}</br>
+                {{ form.size }}
+                {% for error in form.size.errors %}
+                <span class="error-message">{{ error }}</span>
+                {% endfor %}
+            </p>
+
+            <p> {{ form.category.label }}</br>
+                {{ form.category }}
+                {% for error in form.category.errors %}
+                <span class="error-message">{{ error }}</span>
+                {% endfor %}
+            </p>
+
+            <p> {{ form.image.label }}</br>
+                {{ form.image }}
+                {% for error in form.image.errors %}
+                <span class="error-message">{{ error }}</span>
+                {% endfor %}
+            </p>
+
+            <p>
+                {{ form.submit() }}
+            </p>
+
+        </fieldset>
+    </form>
+</div>
+{% endblock %}

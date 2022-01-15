@@ -253,7 +253,7 @@ class Embroidery(db.Model):
 class DesignImprintedHtp(db.Model):
     __tablename__ = 'design_imprinted_htp'
     id = db.Column(db.Integer, primary_key=True)
-    sku_id = db.Column(db.Integer, unique=True)
+    sku_id = db.Column(db.String, unique=True)
     location = db.Column(db.String)
     category = db.Column(db.String)
     total_quantity = db.Column(db.Integer)
@@ -288,7 +288,7 @@ class DesignImprintedHtp(db.Model):
 class DesignClothing(db.Model):
     __tablename__ = 'design_clothing'
     id = db.Column(db.Integer, primary_key=True)
-    sku_id = db.Column(db.Integer, unique=True)
+    sku_id = db.Column(db.String, unique=True)
     color = db.Column(db.String)
     material = db.Column(db.String)
     sleeve_type = db.Column(db.String)

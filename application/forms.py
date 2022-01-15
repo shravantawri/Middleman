@@ -2,6 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField
 from wtforms.validators import DataRequired, Email, Length, EqualTo, ValidationError
 from application.models import User, Supplier, IncomingProduct, ProductSupplier, PlainClothing, Htp, Embroidery
+from flask_wtf.file import FileField, FileRequired
 
 
 class RegistrationForm(FlaskForm):
@@ -222,3 +223,15 @@ class AddDesignImprintedHtpForm(FlaskForm):
     category = StringField("Category", validators=[DataRequired()])
     total_quantity = StringField("Total Quantity", validators=[DataRequired()])
     submit = SubmitField("Create")
+
+
+class AddDesignedClothingForm(FlaskForm):
+    location = StringField("Location", validators=[DataRequired()])
+    total_quantity = StringField("Total Quantity", validators=[DataRequired()])
+    color = StringField("Colour", validators=[DataRequired()])
+    material = StringField("Material", validators=[DataRequired()])
+    sleeve_type = StringField("Sleeve Type", validators=[DataRequired()])
+    size = StringField("Size", validators=[DataRequired()])
+    category = StringField("Category", validators=[DataRequired()])
+    image = FileField("Image", validators=[FileRequired()])
+    submit = SubmitField("Add")
