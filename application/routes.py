@@ -81,7 +81,7 @@ def view_design_imprinted_htp():
     design_imprinted_htp_data = DesignImprintedHtp.query.order_by(
         DesignImprintedHtp.updated_at.desc()).all()
 
-    return render_template("design_imprinted_htp.html", htpData=design_imprinted_htp_data, view=True, title="Design Imprinted HTP")
+    return render_template("design_imprinted_htp.html", designImprintedHtpData=design_imprinted_htp_data, view=True, title="Design Imprinted HTP")
 
 
 @app.route("/products/raw/plain_clothing")
@@ -494,3 +494,19 @@ def add_designed_clothing():
             f'You have successfully created Designed Clothing with SKU ID: {sku_id}', "success")
         return redirect(url_for('view_designed_clothing'))
     return render_template("add_designed_clothing.html", title="Create Designed Clothing", form=form, add_plain_clothing=True)
+
+
+@app.route("/products/end/designed_clothing/top_sku")
+def view_designed_clothing_top_skus():
+    design_clothing_data = DesignClothing.query.order_by(
+        DesignClothing.quantity_debit_count.desc()).all()
+
+    return render_template("designed_clothing.html", designedClothingData=design_clothing_data, top_sku=True, title="Designed Clothing Top SKUs")
+
+
+@app.route("/products/end/design_imprinted_htp/top_sku")
+def view_design_imprinted_htp_top_skus():
+    design_imprinted_htp_data = DesignImprintedHtp.query.order_by(
+        DesignImprintedHtp.quantity_debit_count.desc()).all()
+
+    return render_template("design_imprinted_htp.html", designImprintedHtpData=design_imprinted_htp_data, top_sku=True, title="Design Imprinted HTP Top SKUs")
