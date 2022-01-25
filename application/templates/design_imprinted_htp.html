@@ -46,7 +46,7 @@
 <div>
   <div class="sidenav">
     <a href="{{ url_for('add_design_imprinted_htp') }}">Create New</a>
-    <a href="{{url_for('increase_plain_clothing')}}">Ship Item</a>
+    <a href="{{url_for('decrease_design_imprinted_htp')}}">Ship Item</a>
     <a href="#">Logs</a>
     <a href="{{url_for('view_design_imprinted_htp_top_skus')}}">Top SKUs</a>
     <a href="#">Delete</a>
@@ -79,6 +79,12 @@
           {% elif top_sku %}
           <td>{{ data["quantity_debit_count"] }}</td>
           {% endif %}
+          <td>
+            <a
+              href="{{url_for('decrease_design_imprinted_htp', sku_id=data['sku_id'])}}"
+              ><input type="”button”" value="Ship Item"
+            /></a>
+          </td>
         </tr>
         {% endfor %}
       </tbody>

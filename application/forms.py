@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField
 from wtforms.validators import DataRequired, Email, Length, EqualTo, ValidationError
-from application.models import User, Supplier, IncomingProduct, ProductSupplier, PlainClothing, Htp, Embroidery
+from application.models import User, Supplier, IncomingProduct, ProductSupplier, PlainClothing, Htp, Embroidery, DesignClothing, DesignImprintedHtp
 from flask_wtf.file import FileField, FileRequired
 
 
@@ -235,3 +235,51 @@ class AddDesignedClothingForm(FlaskForm):
     category = StringField("Category", validators=[DataRequired()])
     image = FileField("Image", validators=[FileRequired()])
     submit = SubmitField("Add")
+
+
+class DecreaseDesignedClothingForm(FlaskForm):
+    sku_id = StringField("SKU Id", validators=[DataRequired()])
+    delete_quantity = IntegerField(
+        "Delete Quantity", validators=[DataRequired()])
+    customer_name = StringField("Customer Name", validators=[DataRequired()])
+    submit = SubmitField("Update")
+
+    def validate(self):
+        if not FlaskForm.validate(self):
+            return False
+        result = True
+        designed_clothing = DesignClothing.query.filter_by(
+            sku_id=self.sku_id.data).first()
+        if not designed_clothing:
+            self.sku_id.errors.append(
+                f'Product for SKU ID: {self.sku_id.data} is not present. Please create designed clothing')
+            return False
+        if designed_clothing.total_quantity < self.delete_quantity.data:
+            self.delete_quantity.errors.append(
+                f'Product for SKU ID: {self.sku_id.data}, only {designed_clothing.total_quantity} units are available')
+            return False
+        return result
+
+
+class DecreaseDesignImprintedHtpForm(FlaskForm):
+    sku_id = StringField("SKU Id", validators=[DataRequired()])
+    delete_quantity = IntegerField(
+        "Delete Quantity", validators=[DataRequired()])
+    customer_name = StringField("Customer Name", validators=[DataRequired()])
+    submit = SubmitField("Update")
+
+    def validate(self):
+        if not FlaskForm.validate(self):
+            return False
+        result = True
+        design_imprinted_htp = DesignImprintedHtp.query.filter_by(
+            sku_id=self.sku_id.data).first()
+        if not design_imprinted_htp:
+            self.sku_id.errors.append(
+                f'Product for SKU ID: {self.sku_id.data} is not present. Please create Design Imprinted HTP')
+            return False
+        if design_imprinted_htp.total_quantity < self.delete_quantity.data:
+            self.delete_quantity.errors.append(
+                f'Product for SKU ID: {self.sku_id.data}, only {design_imprinted_htp.total_quantity} units are available')
+            return False
+        return result
