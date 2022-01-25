@@ -1,10 +1,12 @@
+from random import randint
 import datetime
 import os
-from application import app, models, db
+from application import app, models, db, utils
 from flask import render_template, request, json, Response, jsonify, redirect, flash, url_for
 from application.models import User, Enrollment, Supplier, IncomingProduct, ProductSupplier, PlainClothing, Embroidery, Htp, DesignClothing, DesignImprintedHtp
 from application.forms import RegistrationForm, SupplierForm, AddPlainClothingForm, IncreasePlainClothingForm, AddPlainClothingForm, AddEmbroideryForm, AddHtpForm, IncreaseEmbroideryForm, IncreaseHtpForm
-from application.forms import DecreasePlainClothingForm, DecreaseHtpForm, DecreaseEmbroideryForm
+from application.forms import DecreasePlainClothingForm, DecreaseHtpForm, DecreaseEmbroideryForm, AddDesignImprintedHtpForm, AddDesignedClothingForm
+from werkzeug.utils import secure_filename
 
 
 @app.route("/")
@@ -49,7 +51,7 @@ def get_qr_code(raw_item, sku_id):
 
 
 @app.route("/products/incoming")
-def incoming_products(term=None):
+def incoming_products():
     incoming_products_data = IncomingProduct.query.order_by(
         IncomingProduct.updated_at.desc()).all()
 
@@ -57,17 +59,17 @@ def incoming_products(term=None):
 
 
 @app.route("/products/raw")
-def raw_products(term=None):
+def raw_products():
     return render_template("raw_products.html", raw_products=True)
 
 
 @app.route("/products/end")
-def end_products(term=None):
+def end_products():
     return render_template("end_products.html", end_products=True)
 
 
 @app.route("/products/end/designed_clothing")
-def view_designed_clothing(term=None):
+def view_designed_clothing():
     designed_clothing_data = DesignClothing.query.order_by(
         DesignClothing.updated_at.desc()).all()
 
@@ -79,11 +81,11 @@ def view_design_imprinted_htp():
     design_imprinted_htp_data = DesignImprintedHtp.query.order_by(
         DesignImprintedHtp.updated_at.desc()).all()
 
-    return render_template("design_imprinted_htp.html", htpData=design_imprinted_htp_data, view=True, title="Design Imprinted HTP")
+    return render_template("design_imprinted_htp.html", designImprintedHtpData=design_imprinted_htp_data, view=True, title="Design Imprinted HTP")
 
 
 @app.route("/products/raw/plain_clothing")
-def view_plain_clothing(term=None):
+def view_plain_clothing():
     plain_clothing_data = PlainClothing.query.order_by(
         PlainClothing.updated_at.desc()).all()
 
@@ -91,7 +93,7 @@ def view_plain_clothing(term=None):
 
 
 @app.route("/products/raw/embroidery")
-def view_embroidery(term=None):
+def view_embroidery():
     embroidery_data = Embroidery.query.order_by(
         Embroidery.updated_at.desc()).all()
 
@@ -352,7 +354,7 @@ def register_supplier():
 
 
 @app.route("/supplier", methods=["GET"])
-def supplier(term=None):
+def supplier():
     supplier_data = Supplier.query.all()
 
     return render_template("supplier.html", supplierData=supplier_data, supplier=True)
@@ -437,3 +439,74 @@ def decrease_embroidery(sku_id=None):
             flash(f"Oops! No Item present for {sku_id}", "danger")
             return redirect(url_for("embroidery"))
     return render_template("decrease_raw_product_request.html", title="Update Embroidery Quantity", form=form)
+
+
+@app.route("/products/end/design_imprinted_htp/add", methods=["GET", "POST"])
+def add_design_imprinted_htp():
+    form = AddDesignImprintedHtpForm()
+    if form.validate_on_submit():
+        location = form.location.data
+        category = form.category.data
+        total_quantity = form.total_quantity.data
+        sku_id = utils.generate_sku_id(category)
+        design_imprinted_htp = DesignImprintedHtp(
+            sku_id=sku_id,
+            location=location,
+            category=category,
+            total_quantity=total_quantity,
+        )
+        db.session.add(design_imprinted_htp)
+        db.session.commit()
+        flash(
+            f'You have successfully created Design Imprinted HTP with SKU ID: {sku_id}', "success")
+        return redirect(url_for('view_design_imprinted_htp'))
+    return render_template("add_design_imprinted_htp.html", title="Create Design Imprinted HTP", form=form, add_htp=True)
+
+
+@app.route("/products/end/designed_clothing/add", methods=["GET", "POST"])
+def add_designed_clothing():
+    form = AddDesignedClothingForm()
+    if form.validate_on_submit():
+        location = form.location.data
+        total_quantity = form.total_quantity.data
+        color = form.color.data
+        material = form.material.data
+        sleeve_type = form.sleeve_type.data
+        size = form.size.data
+        category = form.category.data
+        f = form.image.data
+        image_url = utils.upload_image_to_bucket(f)
+        sku_id = utils.generate_sku_id(category)
+        designed_clothing = DesignClothing(
+            sku_id=sku_id,
+            location=location,
+            total_quantity=total_quantity,
+            color=color,
+            sleeve_type=sleeve_type,
+            material=material,
+            size=size,
+            category=category,
+            image_url=image_url
+        )
+        db.session.add(designed_clothing)
+        db.session.commit()
+        flash(
+            f'You have successfully created Designed Clothing with SKU ID: {sku_id}', "success")
+        return redirect(url_for('view_designed_clothing'))
+    return render_template("add_designed_clothing.html", title="Create Designed Clothing", form=form, add_plain_clothing=True)
+
+
+@app.route("/products/end/designed_clothing/top_sku")
+def view_designed_clothing_top_skus():
+    design_clothing_data = DesignClothing.query.order_by(
+        DesignClothing.quantity_debit_count.desc()).all()
+
+    return render_template("designed_clothing.html", designedClothingData=design_clothing_data, top_sku=True, title="Designed Clothing Top SKUs")
+
+
+@app.route("/products/end/design_imprinted_htp/top_sku")
+def view_design_imprinted_htp_top_skus():
+    design_imprinted_htp_data = DesignImprintedHtp.query.order_by(
+        DesignImprintedHtp.quantity_debit_count.desc()).all()
+
+    return render_template("design_imprinted_htp.html", designImprintedHtpData=design_imprinted_htp_data, top_sku=True, title="Design Imprinted HTP Top SKUs")
