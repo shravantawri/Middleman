@@ -1,0 +1,43 @@
+{% extends "layout.html" %} {% block content %}
+
+<h1>{{ title }}</h1>
+
+<div class="row">
+  <div class="col-md-12 text-center">
+    {% if not data %}
+    <h1>No Designed Clothing Present</h1>
+    {% else %}
+
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col">SKU ID</th>
+          <th scope="col">Location</th>
+          <th scope="col">Quantity</th>
+          <th scope="col">Colour</th>
+          <th scope="col">Material</th>
+          <th scope="col">Sleeve Type</th>
+          <th scope="col">Size</th>
+          <th scope="col">Category</th>
+          <th scope="col">Image</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Construct the rest of courses here -->
+        <tr>
+          <td scope="row">{{ data["sku_id"] }}</td>
+          <td>{{ data["location"] }}</td>
+          <td>{{ data["total_quantity"] }}</td>
+          <td>{{ data["color"] }}</td>
+          <td>{{ data["material"] }}</td>
+          <td>{{ data["sleeve_type"] }}</td>
+          <td>{{ data["size"] }}</td>
+          <td>{{ data["category"] }}</td>
+          <td><img src="{{ data['image_url'] }}" style="width: 300px" /></td>
+        </tr>
+      </tbody>
+    </table>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -5,7 +5,7 @@ from application import app, models, db, utils
 from flask import render_template, request, json, Response, jsonify, redirect, flash, url_for
 from application.models import User, Enrollment, Supplier, IncomingProduct, ProductSupplier, PlainClothing, Embroidery, Htp, DesignClothing, DesignImprintedHtp
 from application.forms import RegistrationForm, SupplierForm, AddPlainClothingForm, IncreasePlainClothingForm, AddPlainClothingForm, AddEmbroideryForm, AddHtpForm, IncreaseEmbroideryForm, IncreaseHtpForm
-from application.forms import DecreasePlainClothingForm, DecreaseHtpForm, DecreaseEmbroideryForm, AddDesignImprintedHtpForm, AddDesignedClothingForm
+from application.forms import DecreasePlainClothingForm, DecreaseHtpForm, DecreaseEmbroideryForm, AddDesignImprintedHtpForm, AddDesignedClothingForm, DecreaseDesignedClothingForm, DecreaseDesignImprintedHtpForm
 from werkzeug.utils import secure_filename
 
 
@@ -258,7 +258,7 @@ def increase_plain_clothing(sku_id=None):
             return render_template("update_plain_clothing_response.html", title="Updated Plain Clothing Quantity", data=plain_clothing)
         else:
             flash(f"Oops! No Item present for {sku_id}", "danger")
-            return redirect(url_for("plain_clothing"))
+            return redirect(url_for("view_plain_clothing"))
     return render_template("increase_raw_product_request.html", title="Update Plain Clothing Quantity", form=form)
 
 
@@ -383,7 +383,7 @@ def decrease_plain_clothing(sku_id=None):
             return render_template("update_plain_clothing_response.html", title="Updated Plain Clothing Quantity", data=plain_clothing)
         else:
             flash(f"Oops! No Item present for {sku_id}", "danger")
-            return redirect(url_for("plain_clothing"))
+            return redirect(url_for("view_plain_clothing"))
     return render_template("decrease_raw_product_request.html", title="Update Plain Clothing Quantity", form=form)
 
 
@@ -510,3 +510,59 @@ def view_design_imprinted_htp_top_skus():
         DesignImprintedHtp.quantity_debit_count.desc()).all()
 
     return render_template("design_imprinted_htp.html", designImprintedHtpData=design_imprinted_htp_data, top_sku=True, title="Design Imprinted HTP Top SKUs")
+
+
+@app.route("/products/end/designed_clothing/decrease", methods=["GET", "POST"])
+@app.route("/products/end/designed_clothing/<sku_id>/decrease", methods=["GET", "POST"])
+def decrease_designed_clothing(sku_id=None):
+    form = DecreaseDesignedClothingForm()
+    if sku_id:
+        form.sku_id.data = sku_id
+    if form.validate_on_submit():
+        sku_id = form.sku_id.data
+        delete_quantity = form.delete_quantity.data
+        customer_name = form.customer_name.data
+        designed_clothing = DesignClothing.query.filter_by(
+            sku_id=sku_id).first()
+        if designed_clothing:
+            old_quantity = designed_clothing.total_quantity
+            new_quantity = old_quantity - delete_quantity
+            designed_clothing.total_quantity = new_quantity
+            designed_clothing.quantity_debit_count += delete_quantity
+            designed_clothing.updated_at = datetime.datetime.utcnow()
+            db.session.commit()
+            flash(
+                f"Updated quantity of product: {sku_id} from: {old_quantity} to: {new_quantity}", "success")
+            return render_template("update_designed_clothing_response.html", title="Shiped Designed Clothing", data=designed_clothing)
+        else:
+            flash(f"Oops! No Item present for {sku_id}", "danger")
+            return redirect(url_for("view_designed_clothing"))
+    return render_template("ship_end_product_request.html", title="Ship Designed Clothing", form=form)
+
+
+@app.route("/products/end/design_imprinted_htp/decrease", methods=["GET", "POST"])
+@app.route("/products/end/design_imprinted_htp/<sku_id>/decrease", methods=["GET", "POST"])
+def decrease_design_imprinted_htp(sku_id=None):
+    form = DecreaseDesignImprintedHtpForm()
+    if sku_id:
+        form.sku_id.data = sku_id
+    if form.validate_on_submit():
+        sku_id = form.sku_id.data
+        delete_quantity = form.delete_quantity.data
+        customer_name = form.customer_name.data
+        design_imprinted_htp = DesignImprintedHtp.query.filter_by(
+            sku_id=sku_id).first()
+        if design_imprinted_htp:
+            old_quantity = design_imprinted_htp.total_quantity
+            new_quantity = old_quantity - delete_quantity
+            design_imprinted_htp.total_quantity = new_quantity
+            design_imprinted_htp.quantity_debit_count += delete_quantity
+            design_imprinted_htp.updated_at = datetime.datetime.utcnow()
+            db.session.commit()
+            flash(
+                f"Updated quantity of product: {sku_id} from: {old_quantity} to: {new_quantity}", "success")
+            return render_template("update_design_imprinted_htp_response.html", title="Shiped Design Imprinted HTP", data=design_imprinted_htp)
+        else:
+            flash(f"Oops! No Item present for {sku_id}", "danger")
+            return redirect(url_for("view_design_imprinted_htp"))
+    return render_template("ship_end_product_request.html", title="Ship Design Imprinted HTP", form=form)
