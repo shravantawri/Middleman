@@ -1,42 +1,43 @@
 <header>
-  <nav>
-    <ul class="nav nav-pills">
-      <li class="nav-item">
-        <a
-          href="{{ url_for('index') }}"
-          class="nav-link {% if index %}active{% endif %}"
-          >Home</a
-        >
-      </li>
-      <li class="nav-item">
-        <a
-          href="{{ url_for('raw_products') }}"
-          class="nav-link {% if raw_products %}active{% endif %}"
-          >Raw Products</a
-        >
-      </li>
-      <li class="nav-item">
-        <a
-          href="{{ url_for('end_products') }}"
-          class="nav-link {% if end_products %}active{% endif %}"
-          >End Products</a
-        >
-      </li>
-      <li class="nav-item">
-        <a
-          href="{{ url_for('supplier') }}"
-          class="nav-link {% if supplier %}active{% endif %}"
-          >Suppliers</a
-        >
-      </li>
-      <li class="nav-item">
-        <a
-          href="{{ url_for('register_supplier') }}"
-          class="nav-link {% if register_supplier %}active{% endif %}"
-          >Register Supplier</a
-        >
-      </li>
-    </ul>
+  <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a
+            class="nav-link {% if index %}active{% endif %}"
+            href="{{ url_for('index') }}"
+            >Home</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link {% if raw_products %}active{% endif %}"
+            href="{{ url_for('raw_products') }}"
+            >Raw Products <span class="sr-only">(current)</span></a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link {% if end_products %}active{% endif %}"
+            href="{{ url_for('end_products') }}"
+            >End Products</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link {% if supplier %}active{% endif %}"
+            href="{{ url_for('supplier') }}"
+            >Suppliers</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link {% if register_supplier %}active{% endif %}"
+            href="{{ url_for('register_supplier') }}"
+            >Register Supplier</a
+          >
+        </li>
+      </ul>
+    </div>
   </nav>
-  <hr style="clear: both" />
 </header>

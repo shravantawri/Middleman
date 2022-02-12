@@ -1,17 +1,46 @@
 {% extends "layout.html" %} {% block content %}
+<style>
+  .button {
+    display: inline-block;
+    padding: 10px 25px;
+    font-size: 30px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    outline: none;
+    color: #fff;
+    background-color: #4caf50;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 9px #999;
+  }
 
+  .button:hover {
+    background-color: #3e8e41;
+  }
+
+  .button:active {
+    background-color: #3e8e41;
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+  }
+</style>
+<br />
 <div>
   <div class="main">
     <h1>Raw Products</h1>
-    <a href="{{ url_for('view_plain_clothing') }}"
-      ><input type="”button”" value="Plain Clothing"
-    /></a>
-    <a href="{{ url_for('view_htp') }}"
-      ><input type="”button”" value="HTP"
-    /></a>
-    <a href="{{ url_for('view_embroidery') }}"
-      ><input type="”button”" value="Embroidery"
-    /></a>
+
+    <a href="{{ url_for('view_plain_clothing') }}" class="button"
+      ><span> Plain Clothing </span></a
+    >
+
+    <a href="{{ url_for('view_htp') }}" class="button"
+      ><span>Heat Transfer Paper</span></a
+    >
+
+    <a href="{{ url_for('view_embroidery') }}" class="button"
+      ><span>Embroidery Threads</span></a
+    >
   </div>
 </div>
 

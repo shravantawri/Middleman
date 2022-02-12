@@ -1,14 +1,42 @@
 {% extends "layout.html" %} {% block content %}
 
+<style>
+  .button {
+    display: inline-block;
+    padding: 10px 25px;
+    font-size: 30px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    outline: none;
+    color: #fff;
+    background-color: #4caf50;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 9px #999;
+  }
+
+  .button:hover {
+    background-color: #3e8e41;
+  }
+
+  .button:active {
+    background-color: #3e8e41;
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+  }
+</style>
+
 <div>
   <div class="main">
     <h1>End Products</h1>
-    <a href="{{ url_for('view_design_imprinted_htp') }}"
-      ><input type="”button”" value="Design Imprinted HTP"
-    /></a>
-    <a href="{{ url_for('view_designed_clothing') }}"
-      ><input type="”button”" value="Designed Clothing"
-    /></a>
+    <a href="{{ url_for('view_design_imprinted_htp') }}" class="button"
+      ><span> Design Imprinted HTP </span></a
+    >
+
+    <a href="{{ url_for('view_designed_clothing') }}" class="button"
+      ><span> Designed Clothing </span></a
+    >
   </div>
 </div>
 

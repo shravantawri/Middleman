@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField
+from wtforms import StringField, SelectField, PasswordField, SubmitField, BooleanField, IntegerField
 from wtforms.validators import DataRequired, Email, Length, EqualTo, ValidationError
 from application.models import User, Supplier, IncomingProduct, ProductSupplier, PlainClothing, Htp, Embroidery, DesignClothing, DesignImprintedHtp
 from flask_wtf.file import FileField, FileRequired
@@ -37,15 +37,23 @@ class SupplierForm(FlaskForm):
 
 
 class AddPlainClothingForm(FlaskForm):
-    sku_id = StringField("SKU Id", validators=[DataRequired()])
+    color_list = ['Black', 'Charcoal', 'Navy', 'Sports Grey']
+    size_list = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL']
+    material_list = ['SweatShirt', 'Full Zip Hooded SweatShirt',
+                     'Hooded Swearshirt', 'Cotton t-shirt']
+    sleeve_type_list = ['Full Sleeve', 'Half Sleeve']
+    sku_id = StringField("SKU ID", validators=[DataRequired()])
     location = StringField("Location", validators=[DataRequired()])
     reorder_point = StringField("Reorder Point", validators=[DataRequired()])
     demand = StringField("Demand", validators=[DataRequired()])
     total_quantity = StringField("Total Quantity", validators=[DataRequired()])
-    color = StringField("Colour", validators=[DataRequired()])
-    material = StringField("Material", validators=[DataRequired()])
-    sleeve_type = StringField("Sleeve Type", validators=[DataRequired()])
-    size = StringField("Size", validators=[DataRequired()])
+    color = SelectField("Colour", choices=color_list,
+                        validators=[DataRequired()])
+    material = SelectField(
+        "Material", choices=material_list, validators=[DataRequired()])
+    sleeve_type = SelectField(
+        "Sleeve Type", choices=sleeve_type_list, validators=[DataRequired()])
+    size = SelectField("Size", choices=size_list, validators=[DataRequired()])
     supplier_id = StringField("Supplier Id", validators=[DataRequired()])
     submit = SubmitField("Add")
 

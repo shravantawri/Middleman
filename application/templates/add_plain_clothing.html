@@ -1,13 +1,57 @@
 {% extends "layout.html" %}
 
 {% block content %}
+&nbsp
+<style>
+.button {
+  display: inline-block;
+  border-radius: 4px;
+  background-color: #f4511e;
+  border: none;
+  color: #FFFFFF;
+  text-align: center;
+  font-size: 20px;
+  padding: 10px;
+  width: 150px;
+  transition: all 0.5s;
+  cursor: pointer;
+  margin: 5px;
+}
+
+.button span {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  transition: 0.5s;
+}
+
+.button span:after {
+  content: '\00bb';
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: -20px;
+  transition: 0.5s;
+}
+
+.button:hover span {
+  padding-right: 25px;
+}
+
+.button:hover span:after {
+  opacity: 1;
+  right: 0;
+}
+</style>
 
 <div class="container">
+
     <form name="plain_clothing" action="" method="post" novalidate>
         <fieldset class="form-group">
             <legend>{{title}}</legend>
+            &nbsp
             {{ form.hidden_tag() }}
-            <p> {{ form.sku_id.label }}</br>
+            <p> {{ form.sku_id.label(class="form-label ") }}</br>
                 {{ form.sku_id }}
                 {% for error in form.sku_id.errors %}
                 <span class="error-message">{{ error }}</span>
@@ -42,34 +86,38 @@
                 {% endfor %}
             </p>
 
+            <div class="row" style="margin-left:1px">
+
             <p> {{ form.color.label }}</br>
-                {{ form.color }}
+                {{ form.color }} &nbsp &nbsp &nbsp &nbsp
                 {% for error in form.color.errors %}
                 <span class="error-message">{{ error }}</span>
                 {% endfor %}
             </p>
 
+
             <p> {{ form.material.label }}</br>
-                {{ form.material }}
+                {{ form.material }} &nbsp &nbsp &nbsp &nbsp
                 {% for error in form.material.errors %}
                 <span class="error-message">{{ error }}</span>
                 {% endfor %}
             </p>
 
             <p> {{ form.sleeve_type.label }}</br>
-                {{ form.sleeve_type }}
+                {{ form.sleeve_type }} &nbsp &nbsp &nbsp &nbsp
+
                 {% for error in form.sleeve_type.errors %}
                 <span class="error-message">{{ error }}</span>
                 {% endfor %}
             </p>
             
             <p> {{ form.size.label }}</br>
-                {{ form.size }}
+                {{ form.size }} &nbsp &nbsp &nbsp &nbsp
                 {% for error in form.size.errors %}
                 <span class="error-message">{{ error }}</span>
                 {% endfor %}
             </p>
-
+                </div>
             <p> {{ form.supplier_id.label }}</br>
                 {{ form.supplier_id }}
                 {% for error in form.supplier_id.errors %}
@@ -77,11 +125,13 @@
                 {% endfor %}
             </p>
 
-            <p>
-                {{ form.submit() }}
+              <p>
+                 <button class="button" style="vertical-align:middle"><span>Add </span></button>
             </p>
 
         </fieldset>
     </form>
+
 </div>
 {% endblock %}
+
