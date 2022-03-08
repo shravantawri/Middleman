@@ -2,8 +2,8 @@
 
 Warehouse ERP System
 
-
 # DATABASE SETUP STEPS:
+
 1. `create user middleman;`
 
 2. `ALTER USER middleman SUPERUSER;`
@@ -15,9 +15,8 @@ https://blog.theodo.com/2017/03/developping-a-flask-web-app-with-a-postresql-dat
 python manage.py db migrate
 python manage.py db upgrade
 
-
-
 ## Setup in ubuntu
+
 1. `apt update`
 2. `apt install python3-pip`
 3. `pip3 install virtualenv`
@@ -34,6 +33,5 @@ python manage.py db upgrade
 14. `sudo apt-get install postgresql postgresql-contrib`
 15. `sudo su - postgres`
 16. `psql`
-17.  SETUP DATABASE
+17. SETUP DATABASE
 18. `35.203.12.200:5000`
-

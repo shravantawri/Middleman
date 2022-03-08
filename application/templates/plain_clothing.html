@@ -45,15 +45,182 @@
     }
 </style>
 
+ <style>
+        .sidenav {
+  height: 100%; /* 100% Full-height */
+  width: 0; /* 0 width - change this with JavaScript */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Stay on top */
+  top: 0; /* Stay at the top */
+  left: 0;
+  background-color: #111; /* Black*/
+  overflow-x: hidden; /* Disable horizontal scroll */
+  padding-top: 60px; /* Place content 60px from the top */
+  transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
+}
+
+/* The navigation menu links */
+.sidenav a {
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #818181;
+  display: block;
+  transition: 0.3s;
+}
+
+/* When you mouse over the navigation links, change their color */
+.sidenav a:hover {
+  color: #f1f1f1;
+}
+
+/* Position and style the close button (top right corner) */
+.sidenav .closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+  margin-left: 50px;
+}
+
+/* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}
+    </style>
+
+<style>
+.button {
+  display: inline-block;
+  padding: 5px 7px;
+  font-size: 18px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  color: white;
+  background-color: black;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 9px #999;
+}
+
+.button:hover {background-color: #3e8e41}
+
+.button:active {
+  background-color: #3e8e41;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
+</style>
+
+<style>
+.button1 {
+  display: inline-block;
+  padding: 5px 7px;
+  font-size: 18px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  color: white;
+  background-color: green;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 9px #999;
+}
+
+.button1:hover {background-color: #3e8e41}
+
+.button1:active {
+  background-color: #3e8e41;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
+</style>
+
+<style>
+.button2 {
+  display: inline-block;
+  padding: 5px 7px;
+  font-size: 18px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  color: white;
+  background-color: red;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 9px #999;
+}
+
+.button2:hover {background-color: #3e8e41}
+
+.button2:active {
+  background-color: #3e8e41;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
+</style>
+
+<style>
+.button3 {
+  display: inline-block;
+  padding: 5px 7px;
+  font-size: 18px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  color: white;
+  background-color: orange;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 9px #999;
+}
+
+.button3:hover {background-color: #3e8e41}
+
+.button3:active {
+  background-color: #3e8e41;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
+</style>
+
+
 <div>
-    <div class="sidenav">
-        <a href="{{ url_for('add_plain_clothing') }}">Add New</a>
-        <a href="{{url_for('increase_plain_clothing')}}">Increase Quantity</a>
+    <div id="mySidenav" class="sidenav">
+  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+  <a href="{{ url_for('add_plain_clothing') }}">Add New Product</a>
+  <a href="{{url_for('increase_plain_clothing')}}">Incoming Shipment</a>
         <a href="{{url_for('decrease_plain_clothing')}}">Decrease Quantity</a>
-        <a href="#">Logs</a>
-        <a href="{{url_for('view_plain_clothing_top_skus')}}">Top SKUs</a>
+  <a href="#">Incoming Logs</a>
+  <a href="{{url_for('view_plain_clothing_top_skus')}}">Top SKUs</a>
         <a href="#">Delete</a>
-    </div>
+        <a href="/products/raw/plain_clothing/search">Search Plain Clothing</a>
+</div>
+    <!-- Use any element to open the sidenav -->
+<span onclick="openNav()"><button class="button" type="submit">Options</button></span>
+
+
+
+    <script>
+        function openNav() {
+  document.getElementById("mySidenav").style.width = "250px";
+}
+
+/* Set the width of the side navigation to 0 */
+function closeNav() {
+  document.getElementById("mySidenav").style.width = "0";
+}
+    </script>
+
+
+
+
     <div class="main">
         <h1>{{title}}</h1>
         <table class="table table-hover">
@@ -91,12 +258,11 @@
                     {% if view %}
                     <td>{{ data["updated_at"] }}</td>
                     <td>
-                        <img src="{{ url_for('get_qr_code', raw_item='plain_clothing',sku_id=data['sku_id'])}}">
                         <div style="margin-top: 1rem; text-align: center">
                             <button
                                 style="background-color: #63b3ed; border: none; color: #fff; cursor: pointer; padding: 0.5rem 1rem"
                                 , onclick="printImg(this)" , id="{{ url_for('get_qr_code', raw_item='plain_clothing', sku_id=data['sku_id'])}}">
-                                Print
+                                Print QR
                             </button>
                         </div>
                         </img>
@@ -111,14 +277,16 @@
                     </td>
                     <td>
                         <a href="{{url_for('decrease_plain_clothing', sku_id=data['sku_id'])}}"
-                        ><input type="”button”" value="Decrease Quantity"
+                        ><input class="button3" type="button" value="Decrease Quantity"
                         /></a>
+                        &nbsp;
                         <a href="{{url_for('increase_plain_clothing', sku_id=data['sku_id'])}}"
-                        ><input type="”button”" value="Increase Quantity"
+                        ><input class="button1" type="button" value="Increase Quantity"
                         /></a>
+                        &nbsp;
                         <form action="{{url_for('delete_incoming_product')}}" method="POST">
                             <input type="hidden" name="sku_id" value="{{data['sku_id']}}">
-                            <button>Delete Product</button>
+                            <button class="button2">Delete Product</button>
                         </form>
                     </td>
                     {% elif top_sku %}
