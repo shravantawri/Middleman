@@ -15,13 +15,34 @@ def index():
     return render_template("index.html", index=True)
 
 
-@app.route("/get/<id_>")
-def get_by_id(id_):
+@app.route("/products/raw/htp/<sku_id>")
+def get_htp(sku_id):
     try:
-        user = User.query.filter_by(id=id_).first()
-        return jsonify(user.serialize())
+        htp = Htp.query.filter_by(sku_id=sku_id)
+        return render_template("htp.html", htpData=htp, view=True, title="HTP")
     except Exception as e:
-        return(str(e))
+        flash(f"Oops! No Item present for {sku_id}", "danger")
+        return redirect(url_for("view_htp"))
+
+
+@app.route("/products/raw/plain_clothing/<sku_id>")
+def get_plain_clothing(sku_id):
+    try:
+        plain_clothing = PlainClothing.query.filter_by(sku_id=sku_id)
+        return render_template("plain_clothing.html", plainClothingData=plain_clothing, view=True, title="Plain Clothing")
+    except Exception as e:
+        flash(f"Oops! No Item present for {sku_id}", "danger")
+        return redirect(url_for("view_plain_clothing"))
+
+
+@app.route("/products/raw/embroidery/<sku_id>")
+def get_embroidery(sku_id):
+    try:
+        embroidery = Embroidery.query.filter_by(sku_id=sku_id)
+        return render_template("embroidery.html", embroideryData=embroidery, view=True, title="Embroidery")
+    except Exception as e:
+        flash(f"Oops! No Item present for {sku_id}", "danger")
+        return redirect(url_for("view_embroidery"))
 
 
 @app.route("/qr_code/<raw_item>/<sku_id>", methods=['GET'])
@@ -32,8 +53,7 @@ def get_qr_code(raw_item, sku_id):
     from pyqrcode import QRCode
 
     # Generate QR code
-    value = 'http://127.0.0.1:5000/products/raw/'+raw_item+'/'+sku_id+'/decrease'
-    print(value)
+    value = 'http://127.0.0.1:5000/products/raw/'+raw_item+'/'+sku_id
     url = pyqrcode.create(value)
 
     # Create and save the svg file naming "myqr.svg"
@@ -48,14 +68,6 @@ def get_qr_code(raw_item, sku_id):
     # print(list(buffer.getvalue()))
 
     return redirect(url_for('static', filename='images/'+sku_id + '.png'), code=301)
-
-
-@app.route("/products/incoming")
-def incoming_products():
-    incoming_products_data = IncomingProduct.query.order_by(
-        IncomingProduct.updated_at.desc()).all()
-
-    return render_template("incoming_products.html", incomingProductsData=incoming_products_data, incoming_product=True)
 
 
 @app.route("/products/raw")
