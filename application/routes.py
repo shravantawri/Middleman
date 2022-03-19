@@ -98,15 +98,15 @@ def view_design_imprinted_htp():
 
 @app.route("/products/raw/plain_clothing")
 def view_plain_clothing():
-    plain_clothing_data = PlainClothing.query.order_by(
-        PlainClothing.updated_at.desc()).all()
+    plain_clothing_data = PlainClothing.query.filter(PlainClothing.total_quantity > 0).order_by(
+        PlainClothing.updated_at.desc())
 
     return render_template("plain_clothing.html", plainClothingData=plain_clothing_data, view=True, title="Plain Clothing")
 
 
 @app.route("/products/raw/embroidery")
 def view_embroidery():
-    embroidery_data = Embroidery.query.order_by(
+    embroidery_data = Embroidery.query.filter(Embroidery.total_quantity > 0).order_by(
         Embroidery.updated_at.desc()).all()
 
     return render_template("embroidery.html", embroideryData=embroidery_data, view=True, title="Embroidery")
@@ -114,7 +114,7 @@ def view_embroidery():
 
 @app.route("/products/raw/htp")
 def view_htp():
-    htp_data = Htp.query.order_by(
+    htp_data = Htp.query.filter(Htp.total_quantity > 0).order_by(
         Htp.updated_at.desc()).all()
 
     return render_template("htp.html", htpData=htp_data, view=True, title="HTP")
@@ -326,22 +326,43 @@ def increase_embroidery(sku_id=None):
     return render_template("increase_raw_product_request.html", title="Update Embroidery Quantity", form=form)
 
 
-@app.route("/products/incoming/delete", methods=["POST"])
-def delete_incoming_product():
+@app.route("/products/raw/htp/delete", methods=["POST"])
+def delete_htp():
     sku_id = request.form.get('sku_id')
-    incoming_product = IncomingProduct.query.filter_by(sku_id=sku_id).first()
-    if incoming_product is None:
+    htp = Htp.query.filter_by(sku_id=sku_id).first()
+    if htp is None:
         flash(f"Oops! No Product present for {sku_id}", "danger")
-        return redirect(url_for("incoming_products"))
-    product_supplier = ProductSupplier.query.filter_by(
-        product_sku_id=sku_id).first()
-    if product_supplier:
-        db.session.delete(product_supplier)
-        db.session.commit()
-    db.session.delete(incoming_product)
+        return redirect(url_for("view_htp"))
+    db.session.delete(htp)
     db.session.commit()
-    flash(f"Deleted Product for {sku_id}", "success")
-    return redirect(url_for("incoming_products"))
+    flash(f"Deleted HTP for {sku_id}", "success")
+    return redirect(url_for("view_htp"))
+
+
+@app.route("/products/raw/plain_clothing/delete", methods=["POST"])
+def delete_plain_clothing():
+    sku_id = request.form.get('sku_id')
+    plain_clothing = PlainClothing.query.filter_by(sku_id=sku_id).first()
+    if plain_clothing is None:
+        flash(f"Oops! No Product present for {sku_id}", "danger")
+        return redirect(url_for("view_plain_clothing"))
+    db.session.delete(plain_clothing)
+    db.session.commit()
+    flash(f"Deleted Plain Clothing for {sku_id}", "success")
+    return redirect(url_for("view_plain_clothing"))
+
+
+@app.route("/products/raw/embroidery/delete", methods=["POST"])
+def delete_embroidery():
+    sku_id = request.form.get('sku_id')
+    embroidery = Embroidery.query.filter_by(sku_id=sku_id).first()
+    if embroidery is None:
+        flash(f"Oops! No Product present for {sku_id}", "danger")
+        return redirect(url_for("view_embroidery"))
+    db.session.delete(embroidery)
+    db.session.commit()
+    flash(f"Deleted Embroidery for {sku_id}", "success")
+    return redirect(url_for("view_embroidery"))
 
 
 @app.route("/supplier/register", methods=["GET", "POST"])
