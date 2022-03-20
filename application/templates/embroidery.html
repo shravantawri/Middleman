@@ -52,7 +52,6 @@
         <a href="{{url_for('decrease_embroidery')}}">Decrease Quantity</a>
         <a href="#">Logs</a>
         <a href="{{url_for('view_embroidery_top_skus')}}">Top SKUs</a>
-        <a href="#">Delete</a>
     </div>
     <div class="main">
         <h1>{{title}}</h1>
@@ -109,7 +108,7 @@
                         <a href="{{url_for('increase_embroidery', sku_id=data['sku_id'])}}"
                         ><input type="”button”" value="Increase Quantity"
                         /></a>
-                        <form action="{{url_for('delete_incoming_product')}}" method="POST">
+                        <form action="{{url_for('delete_embroidery')}}" method="POST">
                             <input type="hidden" name="sku_id" value="{{data['sku_id']}}">
                             <button>Delete Product</button>
                         </form>

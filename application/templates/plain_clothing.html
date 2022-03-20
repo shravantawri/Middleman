@@ -199,8 +199,7 @@
         <a href="{{url_for('decrease_plain_clothing')}}">Decrease Quantity</a>
   <a href="#">Incoming Logs</a>
   <a href="{{url_for('view_plain_clothing_top_skus')}}">Top SKUs</a>
-        <a href="#">Delete</a>
-        <a href="/products/raw/plain_clothing/search">Search Plain Clothing</a>
+  <a href="/products/raw/plain_clothing/search">Search Plain Clothing</a>
 </div>
     <!-- Use any element to open the sidenav -->
 <span onclick="openNav()"><button class="button" type="submit">Options</button></span>
@@ -284,7 +283,7 @@ function closeNav() {
                         ><input class="button1" type="button" value="Increase Quantity"
                         /></a>
                         &nbsp;
-                        <form action="{{url_for('delete_incoming_product')}}" method="POST">
+                        <form action="{{url_for('delete_plain_clothing')}}" method="POST">
                             <input type="hidden" name="sku_id" value="{{data['sku_id']}}">
                             <button class="button2">Delete Product</button>
                         </form>
