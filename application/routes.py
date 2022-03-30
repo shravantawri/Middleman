@@ -481,7 +481,8 @@ def add_design_imprinted_htp():
         location = form.location.data
         category = form.category.data
         total_quantity = form.total_quantity.data
-        sku_id = utils.generate_sku_id(category)
+        design_code = form.design_code.data
+        sku_id = utils.generate_sku_id(category, design_code)
         design_imprinted_htp = DesignImprintedHtp(
             sku_id=sku_id,
             location=location,
@@ -507,9 +508,10 @@ def add_designed_clothing():
         sleeve_type = form.sleeve_type.data
         size = form.size.data
         category = form.category.data
+        design_code = form.design_code.data
         f = form.image.data
         image_url = utils.upload_image_to_bucket(f)
-        sku_id = utils.generate_sku_id(category)
+        sku_id = utils.generate_sku_id(category, design_code)
         designed_clothing = DesignClothing(
             sku_id=sku_id,
             location=location,
@@ -599,3 +601,29 @@ def decrease_design_imprinted_htp(sku_id=None):
             flash(f"Oops! No Item present for {sku_id}", "danger")
             return redirect(url_for("view_design_imprinted_htp"))
     return render_template("ship_end_product_request.html", title="Ship Design Imprinted HTP", form=form)
+
+
+@app.route("/products/end/design_imprinted_htp/delete", methods=["POST"])
+def delete_design_imprinted_htp():
+    sku_id = request.form.get('sku_id')
+    htp = DesignImprintedHtp.query.filter_by(sku_id=sku_id).first()
+    if htp is None:
+        flash(f"Oops! No Product present for {sku_id}", "danger")
+        return redirect(url_for("view_design_imprinted_htp"))
+    db.session.delete(htp)
+    db.session.commit()
+    flash(f"Deleted Design Imprinted HTP for {sku_id}", "success")
+    return redirect(url_for("view_design_imprinted_htp"))
+
+
+@app.route("/products/end/designed_clothing/delete", methods=["POST"])
+def delete_designed_clothing():
+    sku_id = request.form.get('sku_id')
+    designed_clothing = DesignClothing.query.filter_by(sku_id=sku_id).first()
+    if designed_clothing is None:
+        flash(f"Oops! No Product present for {sku_id}", "danger")
+        return redirect(url_for("view_designed_clothing"))
+    db.session.delete(designed_clothing)
+    db.session.commit()
+    flash(f"Deleted Designed Clothing for {sku_id}", "success")
+    return redirect(url_for("view_designed_clothing"))

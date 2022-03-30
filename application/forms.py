@@ -27,7 +27,7 @@ class SupplierForm(FlaskForm):
     id = StringField("Id", validators=[DataRequired()])
     location = StringField("Location", validators=[DataRequired()])
     name = StringField("Name", validators=[DataRequired()])
-    lead_time = StringField("Lead Time", validators=[DataRequired()])
+    lead_time = IntegerField("Lead Time", validators=[DataRequired()])
     submit = SubmitField("Add")
 
     def validate_id(self, id):
@@ -230,6 +230,8 @@ class AddDesignImprintedHtpForm(FlaskForm):
     location = StringField("Location", validators=[DataRequired()])
     category = StringField("Category", validators=[DataRequired()])
     total_quantity = StringField("Total Quantity", validators=[DataRequired()])
+    design_code = StringField("Design Code")
+
     submit = SubmitField("Create")
 
 
@@ -242,6 +244,8 @@ class AddDesignedClothingForm(FlaskForm):
     size = StringField("Size", validators=[DataRequired()])
     category = StringField("Category", validators=[DataRequired()])
     image = FileField("Image", validators=[FileRequired()])
+    design_code = StringField("Design Code")
+
     submit = SubmitField("Add")
 
 

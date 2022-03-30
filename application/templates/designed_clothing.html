@@ -44,152 +44,184 @@
 </style>
 
 <style>
-        .sidenav {
-  height: 100%; /* 100% Full-height */
-  width: 0; /* 0 width - change this with JavaScript */
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Stay on top */
-  top: 0; /* Stay at the top */
-  left: 0;
-  background-color: #111; /* Black*/
-  overflow-x: hidden; /* Disable horizontal scroll */
-  padding-top: 60px; /* Place content 60px from the top */
-  transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
-}
+  .sidenav {
+    height: 100%; /* 100% Full-height */
+    width: 0; /* 0 width - change this with JavaScript */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Stay on top */
+    top: 0; /* Stay at the top */
+    left: 0;
+    background-color: #111; /* Black*/
+    overflow-x: hidden; /* Disable horizontal scroll */
+    padding-top: 60px; /* Place content 60px from the top */
+    transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
+  }
 
-/* The navigation menu links */
-.sidenav a {
-  padding: 8px 8px 8px 32px;
-  text-decoration: none;
-  font-size: 25px;
-  color: #818181;
-  display: block;
-  transition: 0.3s;
-}
+  /* The navigation menu links */
+  .sidenav a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+  }
 
-/* When you mouse over the navigation links, change their color */
-.sidenav a:hover {
-  color: #f1f1f1;
-}
+  /* When you mouse over the navigation links, change their color */
+  .sidenav a:hover {
+    color: #f1f1f1;
+  }
 
-/* Position and style the close button (top right corner) */
-.sidenav .closebtn {
-  position: absolute;
-  top: 0;
-  right: 25px;
-  font-size: 36px;
-  margin-left: 50px;
-}
+  /* Position and style the close button (top right corner) */
+  .sidenav .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+  }
 
-/* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
-@media screen and (max-height: 450px) {
-  .sidenav {padding-top: 15px;}
-  .sidenav a {font-size: 18px;}
-}
-    </style>
+  /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
+  @media screen and (max-height: 450px) {
+    .sidenav {
+      padding-top: 15px;
+    }
+    .sidenav a {
+      font-size: 18px;
+    }
+  }
+</style>
 
 <style>
-.button {
-  display: inline-block;
-  padding: 5px 7px;
-  font-size: 18px;
-  cursor: pointer;
-  text-align: center;
-  text-decoration: none;
-  outline: none;
-  color: white;
-  background-color: black;
-  border: none;
-  border-radius: 15px;
-  box-shadow: 0 9px #999;
-}
+  .button {
+    display: inline-block;
+    border-radius: 4px;
+    background-color: #f4511e;
+    border: none;
+    color: #ffffff;
+    text-align: center;
+    font-size: 20px;
+    padding: 10px;
+    width: 150px;
+    transition: all 0.5s;
+    cursor: pointer;
+    margin: 5px;
+  }
 
-.button:hover {background-color: #3e8e41}
+  .button span {
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+    transition: 0.9s;
+    color: #ffffff;
+  }
 
-.button:active {
-  background-color: #3e8e41;
-  box-shadow: 0 5px #666;
-  transform: translateY(4px);
-}
+  .button span:after {
+    content: "\00bb";
+    position: absolute;
+    opacity: 0;
+    top: 0;
+    right: -20px;
+    transition: 0.5s;
+  }
+
+  .button:hover span {
+    padding-right: 25px;
+  }
+
+  .button:hover span:after {
+    opacity: 1;
+    right: 0;
+  }
 </style>
 
 <div>
-    <div id="mySidenav" class="sidenav">
-  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-  <a href="{{ url_for('add_designed_clothing') }}">Create New Product</a>
-        <a href="{{url_for('decrease_designed_clothing')}}">Decrease Quantity</a>
-  <a href="#">Incoming Logs</a>
-  <a href="{{url_for('view_designed_clothing_top_skus')}}">Top SKUs</a>
-</div>
-    <!-- Use any element to open the sidenav -->
-<span onclick="openNav()"><button class="button" type="submit">Options</button></span>
-
-
-
-    <script>
-        function openNav() {
-  document.getElementById("mySidenav").style.width = "250px";
-}
-
-/* Set the width of the side navigation to 0 */
-function closeNav() {
-  document.getElementById("mySidenav").style.width = "0";
-}
-    </script>
-
-
-
-
-<div>
-  <div class="main">
-    <h1>{{title}}</h1>
-    <table class="table table-hover">
-      <thead>
-        <tr>
-          <th scope="col">SKU ID</th>
-          <th scope="col">Location</th>
-          <th scope="col">Quantity</th>
-          <th scope="col">Colour</th>
-          <th scope="col">Material</th>
-          <th scope="col">Sleeve Type</th>
-          <th scope="col">Size</th>
-          <th scope="col">Category</th>
-          <th scope="col">Image</th>
-          {% if view %}
-          <th scope="col">Time</th>
-          {% elif top_sku %}
-          <th scope="col">Total Debited Quantity</th>
-          {% endif %}
-        </tr>
-      </thead>
-      <tbody>
-        {% for data in designedClothingData %}
-        <tr>
-          <td scope="row">{{ data["sku_id"] }}</td>
-          <td>{{ data["location"] }}</td>
-          <td>{{ data["total_quantity"] }}</td>
-          <td>{{ data["color"] }}</td>
-          <td>{{ data["material"] }}</td>
-          <td>{{ data["sleeve_type"] }}</td>
-          <td>{{ data["size"] }}</td>
-          <td>{{ data["category"] }}</td>
-          <td><img src="{{ data['image_url'] }}" style="width: 300px" /></td>
-          {% if view %}
-          <td>{{ data["updated_at"] }}</td>
-          {% elif top_sku %}
-          <td>{{ data["quantity_debit_count"] }}</td>
-          {% endif %}
-          <td>
-            <a
-              href="{{url_for('decrease_designed_clothing', sku_id=data['sku_id'])}}"
-              ><input type="”button”" value="Ship Item"
-            /></a>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+  <div id="mySidenav" class="sidenav">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()"
+      >&times;</a
+    >
+    <a href="{{ url_for('add_designed_clothing') }}">Create New Product</a>
+    <a href="{{url_for('decrease_designed_clothing')}}">Decrease Quantity</a>
+    <a href="#">Incoming Logs</a>
+    <a href="{{url_for('view_designed_clothing_top_skus')}}">Top SKUs</a>
   </div>
-</div>
+  <!-- Use any element to open the sidenav -->
+  <span onclick="openNav()"
+    ><button class="button" type="submit">Options</button></span
+  >
 
-{% endblock %}
+  <script>
+    function openNav() {
+      document.getElementById("mySidenav").style.width = "250px";
+    }
+
+    /* Set the width of the side navigation to 0 */
+    function closeNav() {
+      document.getElementById("mySidenav").style.width = "0";
+    }
+  </script>
+
+  <div>
+    <div class="main">
+      <h1>{{title}}</h1>
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">SKU ID</th>
+            <th scope="col">Location</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Colour</th>
+            <th scope="col">Material</th>
+            <th scope="col">Sleeve Type</th>
+            <th scope="col">Size</th>
+            <th scope="col">Category</th>
+            <th scope="col">Image</th>
+            {% if view %}
+            <th scope="col">Time</th>
+            {% elif top_sku %}
+            <th scope="col">Total Debited Quantity</th>
+            {% endif %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for data in designedClothingData %}
+          <tr>
+            <td scope="row">{{ data["sku_id"] }}</td>
+            <td>{{ data["location"] }}</td>
+            <td>{{ data["total_quantity"] }}</td>
+            <td>{{ data["color"] }}</td>
+            <td>{{ data["material"] }}</td>
+            <td>{{ data["sleeve_type"] }}</td>
+            <td>{{ data["size"] }}</td>
+            <td>{{ data["category"] }}</td>
+            <td><img src="{{ data['image_url'] }}" style="width: 300px" /></td>
+            {% if view %}
+            <td>{{ data["updated_at"] }}</td>
+            {% elif top_sku %}
+            <td>{{ data["quantity_debit_count"] }}</td>
+            {% endif %}
+            <td>
+              <a
+                href="{{url_for('decrease_designed_clothing', sku_id=data['sku_id'])}}"
+                class="button"
+                ><span> Ship Item </span>
+              </a>
+            </td>
+            <td>
+              <form
+                action="{{url_for('delete_designed_clothing')}}"
+                method="POST"
+              >
+                <input type="hidden" name="sku_id" value="{{data['sku_id']}}" />
+                <button class="button">Delete</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  {% endblock %}
+</div>
