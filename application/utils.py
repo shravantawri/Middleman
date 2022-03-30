@@ -3,8 +3,8 @@ from google.cloud import storage
 import os
 
 
-def generate_sku_id(category):
-    s = category[0]
+def generate_sku_id(category, design_code):
+    s = design_code + category[0]
     for _ in range(5):
         s = s + str(randint(0, 9))
     return s

@@ -103,6 +103,13 @@
                 {% endfor %}
             </p>
 
+            <p> {{ form.design_code.label }}</br>
+                {{ form.design_code }}
+                {% for error in form.design_code.errors %}
+                <span class="error-message">{{ error }}</span>
+                {% endfor %}
+            </p>
+
             <p>
                  <button class="button" style="vertical-align:middle"><span>Add </span></button>
             </p>
