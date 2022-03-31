@@ -269,6 +269,9 @@ function closeNav() {
                         <a href="{{url_for('increase_htp', sku_id=data['sku_id'])}}"
                         ><input class="button1" type="button" value="Increase Quantity"
                         /></a>
+                        <a href="{{url_for('update_htp_location', sku_id=data['sku_id'])}}"
+                        ><input class="button3" style="background-color:blue" type="button" value="Update Location"
+                        /></a>
                         <form action="{{url_for('delete_htp')}}" method="POST">
                             <input type="hidden" name="sku_id" value="{{data['sku_id']}}">
                             <button class="button2">Delete Product</button>

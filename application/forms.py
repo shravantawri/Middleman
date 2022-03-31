@@ -295,3 +295,57 @@ class DecreaseDesignImprintedHtpForm(FlaskForm):
                 f'Product for SKU ID: {self.sku_id.data}, only {design_imprinted_htp.total_quantity} units are available')
             return False
         return result
+
+
+class UpdatePlainClothingLocationForm(FlaskForm):
+    sku_id = StringField("SKU Id", validators=[DataRequired()])
+    location = StringField("Location", validators=[DataRequired()])
+    submit = SubmitField("Update")
+
+    def validate(self):
+        if not FlaskForm.validate(self):
+            return False
+        result = True
+        plain_clothing = PlainClothing.query.filter_by(
+            sku_id=self.sku_id.data).first()
+        if not plain_clothing:
+            self.sku_id.errors.append(
+                f'Product for SKU ID: {self.sku_id.data} is not present. Please create Plain Clothing')
+            return False
+        return result
+
+
+class UpdateHtpLocationForm(FlaskForm):
+    sku_id = StringField("SKU Id", validators=[DataRequired()])
+    location = StringField("Location", validators=[DataRequired()])
+    submit = SubmitField("Update")
+
+    def validate(self):
+        if not FlaskForm.validate(self):
+            return False
+        result = True
+        htp = Htp.query.filter_by(
+            sku_id=self.sku_id.data).first()
+        if not htp:
+            self.sku_id.errors.append(
+                f'Product for SKU ID: {self.sku_id.data} is not present. Please create HTP')
+            return False
+        return result
+
+
+class UpdateEmbroideryLocationForm(FlaskForm):
+    sku_id = StringField("SKU Id", validators=[DataRequired()])
+    location = StringField("Location", validators=[DataRequired()])
+    submit = SubmitField("Update")
+
+    def validate(self):
+        if not FlaskForm.validate(self):
+            return False
+        result = True
+        embroidery = Embroidery.query.filter_by(
+            sku_id=self.sku_id.data).first()
+        if not embroidery:
+            self.sku_id.errors.append(
+                f'Product for SKU ID: {self.sku_id.data} is not present. Please create Embroidery')
+            return False
+        return result
